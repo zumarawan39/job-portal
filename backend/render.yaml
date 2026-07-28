@@ -1,0 +1,39 @@
+# Render.com deployment blueprint for the backend API.
+# How to use: push this repo to GitHub, then in Render click "New +" -> "Blueprint"
+# and point it at this repo. Render will read this file and create the service below.
+# You'll still need to fill in the actual secret values in the Render dashboard
+# (they're intentionally left blank here - never commit real secrets to git).
+services:
+  - type: web
+    name: jobportal-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: PORT
+        value: 8000
+      - key: SECRET_KEY
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: CLOUD_NAME
+        sync: false
+      - key: API_KEY
+        sync: false
+      - key: API_SECRET
+        sync: false
+      - key: EMAIL_HOST
+        sync: false
+      - key: EMAIL_PORT
+        value: 587
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: DAILY_API_KEY
+        sync: false
