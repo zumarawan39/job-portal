@@ -12,31 +12,43 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setLoading, setUser } from '@/redux/authSlice'
 import { Loader2 } from 'lucide-react'
 
+// Login form where users enter email/password and pick their role (student or recruiter)
 const Login = () => {
     const [input, setInput] = useState({
         email: "",
         password: "",
         role: "",
     });
+    // Read whether a login request is in progress, and the currently logged-in user, from Redux
     const { loading,user } = useSelector(store => store.auth);
+    // Lets us redirect to the home page after logging in
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    // Update form state whenever an input (email, password, role) changes
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
     }
 
+    // Sends the login form data to the backend and logs the user in if it's valid
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
+            // Show the loading spinner while the request is in flight
             dispatch(setLoading(true));
+            // Send login credentials to the backend and check if they're valid
             const res = await axios.post(`${USER_API_END_POINT}/login`, input, {
                 headers: {
                     "Content-Type": "application/json"
                 },
                 withCredentials: true,
             });
-            if (res.data.success) {
+            if (res.data.requiresTwoFactor) {
+                // Account has 2FA enabled: no cookie was set yet, send the user to enter their OTP
+                toast.success(res.data.message);
+                navigate("/verify-otp", { state: { userId: res.data.userId } });
+            } else if (res.data.success) {
+                // Save the logged-in user in Redux so the rest of the app knows who's logged in
                 dispatch(setUser(res.data.user));
                 navigate("/");
                 toast.success(res.data.message);
@@ -48,6 +60,7 @@ const Login = () => {
             dispatch(setLoading(false));
         }
     }
+    // If a user is already logged in, skip the login page and go straight home
     useEffect(()=>{
         if(user){
             navigate("/");
@@ -79,6 +92,7 @@ const Login = () => {
                             onChange={changeEventHandler}
                             placeholder="patel@gmail.com"
                         />
+                        <Link to="/forgot-password" className='text-blue-600 text-sm'>Forgot password?</Link>
                     </div>
                     <div className='flex items-center justify-between'>
                         <RadioGroup className="flex items-center gap-4 my-5">
@@ -107,6 +121,7 @@ const Login = () => {
                         </RadioGroup>
                     </div>
                     {
+                        // Show a spinner button while logging in, otherwise show the normal submit button
                         loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Login</Button>
                     }
                     <span className='text-sm'>Don't have an account? <Link to="/signup" className='text-blue-600'>Signup</Link></span>

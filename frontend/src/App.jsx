@@ -20,6 +20,9 @@ const CompanySetup = lazy(() => import('./components/admin/CompanySetup'))
 const AdminJobs = lazy(() => import('./components/admin/AdminJobs'))
 const PostJob = lazy(() => import('./components/admin/PostJob'))
 const Applicants = lazy(() => import('./components/admin/Applicants'))
+const ForgotPassword = lazy(() => import('./components/auth/ForgotPassword'))
+const ResetPassword = lazy(() => import('./components/auth/ResetPassword'))
+const VerifyOtp = lazy(() => import('./components/auth/VerifyOtp'))
 
 // Simple centered spinner shown while a lazy-loaded page chunk is being fetched
 const PageLoader = () => (
@@ -60,6 +63,18 @@ const appRouter = createBrowserRouter([
   {
     path: "/profile",
     element: withSuspense(<Profile />)
+  },
+  {
+    path: "/forgot-password",
+    element: withSuspense(<ForgotPassword />)
+  },
+  {
+    path: "/reset-password/:token",
+    element: withSuspense(<ResetPassword />)
+  },
+  {
+    path: "/verify-otp",
+    element: withSuspense(<VerifyOtp />)
   },
   // Admin-only routes start here (wrapped in ProtectedRoute so only admins can view them)
   {
