@@ -77,7 +77,15 @@ const Navbar = () => {
                 <div className='flex items-center gap-12'>
                     <ul className='flex font-medium items-center gap-5'>
                         {
-                            user && user.role === 'recruiter' ? (
+                            // Show the right nav links depending on the logged-in user's role:
+                            // real platform admins get a single Admin Dashboard link,
+                            // recruiters get their Companies/Jobs management links,
+                            // everyone else (students / logged-out) gets the normal job-seeker links
+                            user && user.role === 'admin' ? (
+                                <>
+                                    <li><Link to="/platform-admin">Admin Dashboard</Link></li>
+                                </>
+                            ) : user && user.role === 'recruiter' ? (
                                 <>
                                     <li><Link to="/admin/companies">Companies</Link></li>
                                     <li><Link to="/admin/jobs">Jobs</Link></li>
@@ -144,6 +152,7 @@ const Navbar = () => {
                         )
                     }
                     {
+                        // If nobody is logged in, show Login/Signup buttons, otherwise show the user's profile menu
                         !user ? (
                             <div className='flex items-center gap-2'>
                                 <Link to="/login"><Button variant="outline">Login</Button></Link>
@@ -169,6 +178,7 @@ const Navbar = () => {
                                         </div>
                                         <div className='flex flex-col my-2 text-gray-600'>
                                             {
+                                                // Only students get a "View Profile" link (recruiters don't have a public profile page)
                                                 user && user.role === 'student' && (
                                                     <>
                                                         <div className='flex w-fit items-center gap-2 cursor-pointer'>

@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import Navbar from './components/shared/Navbar'
 import ProtectedRoute from './components/admin/ProtectedRoute'
+import PlatformAdminRoute from './components/platformadmin/PlatformAdminRoute'
 
 // Route-level pages are lazy-loaded so the initial bundle only ships the code needed
 // for whichever page the user actually lands on (smaller first load, code-split per route)
@@ -20,6 +21,7 @@ const CompanySetup = lazy(() => import('./components/admin/CompanySetup'))
 const AdminJobs = lazy(() => import('./components/admin/AdminJobs'))
 const PostJob = lazy(() => import('./components/admin/PostJob'))
 const Applicants = lazy(() => import('./components/admin/Applicants'))
+const PlatformAdminDashboard = lazy(() => import('./components/platformadmin/PlatformAdminDashboard'))
 const ForgotPassword = lazy(() => import('./components/auth/ForgotPassword'))
 const ResetPassword = lazy(() => import('./components/auth/ResetPassword'))
 const VerifyOtp = lazy(() => import('./components/auth/VerifyOtp'))
@@ -80,6 +82,11 @@ const appRouter = createBrowserRouter([
   {
     path: "/verify-otp",
     element: withSuspense(<VerifyOtp />)
+  },
+  // Real platform-admin dashboard (not to be confused with the recruiter "admin" routes below)
+  {
+    path: "/platform-admin",
+    element: <PlatformAdminRoute>{withSuspense(<PlatformAdminDashboard />)}</PlatformAdminRoute>
   },
   // Admin-only routes start here (wrapped in ProtectedRoute so only admins can view them)
   {
