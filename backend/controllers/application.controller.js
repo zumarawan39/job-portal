@@ -1,9 +1,13 @@
 import { Application } from "../models/application.model.js";
 import { Job } from "../models/job.model.js";
+import { Notification } from "../models/notification.model.js";
+import { User } from "../models/user.model.js";
+import sendEmail from "../utils/sendEmail.js";
 
+// Let a logged-in student apply to a job
 export const applyJob = async (req, res) => {
     try {
-        const userId = req.id;
+        const userId = req.id; // comes from the isAuthenticated middleware
         const jobId = req.params.id;
         if (!jobId) {
             return res.status(400).json({
@@ -35,6 +39,7 @@ export const applyJob = async (req, res) => {
             applicant:userId,
         });
 
+        // link this application to the job so we can find it later
         job.applications.push(newApplication._id);
         await job.save();
         return res.status(201).json({
@@ -45,9 +50,11 @@ export const applyJob = async (req, res) => {
         console.log(error);
     }
 };
+// Get all jobs a logged-in student has applied to
 export const getAppliedJobs = async (req,res) => {
     try {
         const userId = req.id;
+        // find this user's applications, and also fetch (populate) the related job and company details
         const application = await Application.find({applicant:userId}).sort({createdAt:-1}).populate({
             path:'job',
             options:{sort:{createdAt:-1}},
@@ -70,10 +77,11 @@ export const getAppliedJobs = async (req,res) => {
         console.log(error);
     }
 }
-// admin dekhega kitna user ne apply kiya hai
+// Recruiter/admin views how many people applied to a job
 export const getApplicants = async (req,res) => {
     try {
         const jobId = req.params.id;
+        // find the job, and also fetch (populate) each application plus the applicant's details
         const job = await Job.findById(jobId).populate({
             path:'applications',
             options:{sort:{createdAt:-1}},
@@ -88,13 +96,14 @@ export const getApplicants = async (req,res) => {
             })
         };
         return res.status(200).json({
-            job, 
+            job,
             succees:true
         });
     } catch (error) {
         console.log(error);
     }
 }
+// Recruiter updates an applicant's status (e.g. accepted/rejected/pending)
 export const updateStatus = async (req,res) => {
     try {
         const {status} = req.body;
@@ -115,9 +124,32 @@ export const updateStatus = async (req,res) => {
             })
         };
 
-        // update the status
+        // update the status (always store it in lowercase, e.g. "accepted")
         application.status = status.toLowerCase();
         await application.save();
+
+        // let the applicant know their status changed by creating an in-app notification
+        const job = await Job.findById(application.job);
+        await Notification.create({
+            user: application.applicant,
+            message: `Your application for "${job?.title}" has been ${application.status}.`,
+            type: 'application_status',
+            relatedJob: application.job
+        });
+
+        // also try to email them - wrapped separately so a broken/missing email setup never breaks this response
+        try {
+            const applicant = await User.findById(application.applicant);
+            if (applicant) {
+                await sendEmail({
+                    to: applicant.email,
+                    subject: "Update on your job application",
+                    html: `<p>Your application for "${job?.title}" has been <b>${application.status}</b>.</p>`
+                });
+            }
+        } catch (error) {
+            console.log(error);
+        }
 
         return res.status(200).json({
             message:"Status updated successfully.",
