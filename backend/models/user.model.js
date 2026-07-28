@@ -40,5 +40,6 @@ const userSchema = new mongoose.Schema({
     twoFactorEnabled:{type:Boolean, default:false}, // whether this user has opted into email OTP login verification
     twoFactorOTP:{type:String}, // hashed one-time code sent to the user's email during login
     twoFactorOTPExpire:{type:Date}, // when the OTP stops being valid
+    savedJobs:[{type:mongoose.Schema.Types.ObjectId, ref:'Job'}], // jobs this user has bookmarked to view later
 },{timestamps:true}); // adds createdAt and updatedAt automatically
 export const User = mongoose.model('User', userSchema);

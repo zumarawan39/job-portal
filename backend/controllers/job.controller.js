@@ -184,3 +184,42 @@ export const getRecommendedJobs = async (req, res) => {
         console.log(error);
     }
 }
+// Save (bookmark) a job for later, or remove it if it's already saved
+export const toggleSaveJob = async (req, res) => {
+    try {
+        const user = await User.findById(req.id);
+        const jobId = req.params.id;
+
+        const alreadySaved = user.savedJobs.some(id => id.toString() === jobId);
+        if (alreadySaved) {
+            user.savedJobs = user.savedJobs.filter(id => id.toString() !== jobId);
+        } else {
+            user.savedJobs.push(jobId);
+        }
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            saved: !alreadySaved,
+            message: !alreadySaved ? "Job saved." : "Job removed from saved jobs."
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
+// Get all jobs the logged-in user has saved for later
+export const getSavedJobs = async (req, res) => {
+    try {
+        const user = await User.findById(req.id).populate({
+            path: 'savedJobs',
+            populate: { path: 'company' }
+        });
+
+        return res.status(200).json({
+            success: true,
+            jobs: user.savedJobs
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}

@@ -17,6 +17,7 @@ const jobSlice = createSlice({
             salaryMax:"",
         },
         recommendedJobs:[],
+        savedJobIds:[],
     },
     reducers:{
         // actions
@@ -60,6 +61,19 @@ const jobSlice = createSlice({
         // Stores the skill-based recommended jobs for the logged-in student
         setRecommendedJobs:(state,action) => {
             state.recommendedJobs = action.payload;
+        },
+        // Replaces the whole list of saved job ids (e.g. after fetching from the backend)
+        setSavedJobIds:(state,action) => {
+            state.savedJobIds = action.payload;
+        },
+        // Toggles a single job id in/out of the saved list (used after the save/unsave API call succeeds)
+        toggleSavedJobIdLocally:(state,action) => {
+            const jobId = action.payload;
+            if (state.savedJobIds.includes(jobId)) {
+                state.savedJobIds = state.savedJobIds.filter(id => id !== jobId);
+            } else {
+                state.savedJobIds = [...state.savedJobIds, jobId];
+            }
         }
     }
 });
@@ -72,6 +86,8 @@ export const {
     setSearchedQuery,
     setFilters,
     clearFilters,
-    setRecommendedJobs
+    setRecommendedJobs,
+    setSavedJobIds,
+    toggleSavedJobIdLocally
 } = jobSlice.actions;
 export default jobSlice.reducer;

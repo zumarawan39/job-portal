@@ -23,6 +23,7 @@ const Applicants = lazy(() => import('./components/admin/Applicants'))
 const ForgotPassword = lazy(() => import('./components/auth/ForgotPassword'))
 const ResetPassword = lazy(() => import('./components/auth/ResetPassword'))
 const VerifyOtp = lazy(() => import('./components/auth/VerifyOtp'))
+const SavedJobs = lazy(() => import('./components/SavedJobs'))
 
 // Simple centered spinner shown while a lazy-loaded page chunk is being fetched
 const PageLoader = () => (
@@ -63,6 +64,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/profile",
     element: withSuspense(<Profile />)
+  },
+  {
+    path: "/saved-jobs",
+    element: withSuspense(<SavedJobs />)
   },
   {
     path: "/forgot-password",

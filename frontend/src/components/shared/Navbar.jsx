@@ -2,15 +2,18 @@ import React from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Button } from '../ui/button'
 import { Avatar, AvatarImage } from '../ui/avatar'
-import { LogOut, User2 } from 'lucide-react'
+import { LogOut, User2, Bookmark } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { USER_API_END_POINT } from '@/utils/constant'
 import { setUser } from '@/redux/authSlice'
+import useGetSavedJobs from '@/hooks/useGetSavedJobs'
 import { toast } from 'sonner'
 
 const Navbar = () => {
+    // Fetches the logged-in student's saved job ids and keeps them in Redux
+    useGetSavedJobs();
     const { user } = useSelector(store => store.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -80,10 +83,16 @@ const Navbar = () => {
                                         <div className='flex flex-col my-2 text-gray-600'>
                                             {
                                                 user && user.role === 'student' && (
-                                                    <div className='flex w-fit items-center gap-2 cursor-pointer'>
-                                                        <User2 />
-                                                        <Button variant="link"> <Link to="/profile">View Profile</Link></Button>
-                                                    </div>
+                                                    <>
+                                                        <div className='flex w-fit items-center gap-2 cursor-pointer'>
+                                                            <User2 />
+                                                            <Button variant="link"> <Link to="/profile">View Profile</Link></Button>
+                                                        </div>
+                                                        <div className='flex w-fit items-center gap-2 cursor-pointer'>
+                                                            <Bookmark />
+                                                            <Button variant="link"> <Link to="/saved-jobs">Saved Jobs</Link></Button>
+                                                        </div>
+                                                    </>
                                                 )
                                             }
 
