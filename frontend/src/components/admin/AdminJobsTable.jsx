@@ -6,14 +6,20 @@ import { Edit2, Eye, MoreHorizontal } from 'lucide-react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
-const AdminJobsTable = () => { 
+// Table that lists jobs posted by the admin, with edit/view-applicants actions
+const AdminJobsTable = () => {
+    // Read the list of all admin jobs and the current search text from the job slice in Redux
     const {allAdminJobs, searchJobByText} = useSelector(store=>store.job);
 
+    // Jobs left after filtering by the search text, this is what actually gets rendered
     const [filterJobs, setFilterJobs] = useState(allAdminJobs);
+    // Lets us send the user to the edit page or the applicants page
     const navigate = useNavigate();
 
-    useEffect(()=>{ 
+    // Re-run the filter whenever the job list or the search text changes
+    useEffect(()=>{
         console.log('called');
+        // Keep only jobs whose title or company name matches the search text
         const filteredJobs = allAdminJobs.filter((job)=>{
             if(!searchJobByText){
                 return true;
@@ -37,6 +43,7 @@ const AdminJobsTable = () => {
                 </TableHeader>
                 <TableBody>
                     {
+                        // Render one table row per filtered job
                         filterJobs?.map((job) => (
                             <tr>
                                 <TableCell>{job?.company?.name}</TableCell>

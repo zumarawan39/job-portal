@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Connect our app to the MongoDB database using the URI from .env
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI);

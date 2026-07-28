@@ -8,20 +8,27 @@ import { setSingleJob } from '@/redux/jobSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
 
+// Shows full details of a single job and lets the user apply to it
 const JobDescription = () => {
+    // Read the currently viewed job from the job slice of Redux state
     const {singleJob} = useSelector(store => store.job);
+    // Read the logged-in user from the auth slice of Redux state
     const {user} = useSelector(store=>store.auth);
+    // Check if the logged-in user has already applied to this job
     const isIntiallyApplied = singleJob?.applications?.some(application => application.applicant === user?._id) || false;
     const [isApplied, setIsApplied] = useState(isIntiallyApplied);
 
+    // Read the job id from the URL (e.g. /description/:id)
     const params = useParams();
     const jobId = params.id;
     const dispatch = useDispatch();
 
+    // Sends a request to apply the logged-in user to this job
     const applyJobHandler = async () => {
         try {
+            // Ask the backend to apply the current user to this job
             const res = await axios.get(`${APPLICATION_API_END_POINT}/apply/${jobId}`, {withCredentials:true});
-            
+
             if(res.data.success){
                 setIsApplied(true); // Update the local state
                 const updatedSingleJob = {...singleJob, applications:[...singleJob.applications,{applicant:user?._id}]}
@@ -35,11 +42,14 @@ const JobDescription = () => {
         }
     }
 
+    // Re-runs whenever the job id or user changes, so it loads the right job details each time
     useEffect(()=>{
         const fetchSingleJob = async () => {
             try {
+                // Fetch the full details of this job from the backend
                 const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`,{withCredentials:true});
                 if(res.data.success){
+                    // Store the fetched job in Redux so it can be shown on this page
                     dispatch(setSingleJob(res.data.job));
                     setIsApplied(res.data.job.applications.some(application=>application.applicant === user?._id)) // Ensure the state is in sync with fetched data
                 }
@@ -47,7 +57,7 @@ const JobDescription = () => {
                 console.log(error);
             }
         }
-        fetchSingleJob(); 
+        fetchSingleJob();
     },[jobId,dispatch, user?._id]);
 
     return (

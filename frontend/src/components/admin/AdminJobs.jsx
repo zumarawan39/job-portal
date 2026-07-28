@@ -8,13 +8,20 @@ import AdminJobsTable from './AdminJobsTable'
 import useGetAllAdminJobs from '@/hooks/useGetAllAdminJobs'
 import { setSearchJobByText } from '@/redux/jobSlice'
 
+// Page for admins to see all jobs they posted, search them, and create new ones
 const AdminJobs = () => {
+  // Custom hook that fetches all jobs posted by this admin/recruiter
   useGetAllAdminJobs();
+  // Text typed into the search box
   const [input, setInput] = useState("");
+  // Lets us send the user to another page (like the create job page)
   const navigate = useNavigate();
+  // Lets us send actions to the Redux store
   const dispatch = useDispatch();
 
+  // Runs every time the search text changes, so the job list stays filtered live
   useEffect(() => {
+    // Save the search text in Redux so the table component can filter jobs by it
     dispatch(setSearchJobByText(input));
   }, [input]);
   return (

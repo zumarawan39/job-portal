@@ -1,3 +1,4 @@
+// A reusable button component with different visual styles (variant) and sizes
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva } from "class-variance-authority";

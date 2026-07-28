@@ -1,3 +1,4 @@
+// A styled text label component for form fields, built on Radix UI's Label primitive
 import * as React from "react"
 import * as LabelPrimitive from "@radix-ui/react-label"
 import { cva } from "class-variance-authority";

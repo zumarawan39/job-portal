@@ -1,3 +1,4 @@
+// A styled avatar/profile picture component built on top of Radix UI's Avatar primitive
 import * as React from "react"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
 

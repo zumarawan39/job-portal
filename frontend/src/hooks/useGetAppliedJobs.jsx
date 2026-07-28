@@ -4,9 +4,11 @@ import axios from "axios"
 import { useEffect } from "react"
 import { useDispatch } from "react-redux"
 
+// Custom hook: fetches the jobs the logged-in user has already applied to
 const useGetAppliedJobs = () => {
     const dispatch = useDispatch();
 
+    // Runs once when the component using this hook first renders
     useEffect(()=>{
         const fetchAppliedJobs = async () => {
             try {

@@ -11,8 +11,11 @@ import { toast } from 'sonner'
 import { useSelector } from 'react-redux'
 import useGetCompanyById from '@/hooks/useGetCompanyById'
 
+// Form for editing an existing company's details (name, description, logo, etc.)
 const CompanySetup = () => {
+    // Read the company id from the URL (e.g. /admin/companies/:id)
     const params = useParams();
+    // Custom hook that fetches this one company's data by id
     useGetCompanyById(params.id);
     const [input, setInput] = useState({
         name: "",
@@ -21,19 +24,24 @@ const CompanySetup = () => {
         location: "",
         file: null
     });
+    // Read the currently loaded company from Redux, used to pre-fill the form
     const {singleCompany} = useSelector(store=>store.company);
+    // Whether the update request is in progress, used to show a spinner on the button
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
+    // Update form state whenever a text input changes
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
     }
 
+    // Update form state with the selected logo file
     const changeFileHandler = (e) => {
         const file = e.target.files?.[0];
         setInput({ ...input, file });
     }
 
+    // Sends the updated company details (including the logo file) to the backend
     const submitHandler = async (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -46,6 +54,7 @@ const CompanySetup = () => {
         }
         try {
             setLoading(true);
+            // Update this company's info on the backend (multipart because it may include a file)
             const res = await axios.put(`${COMPANY_API_END_POINT}/update/${params.id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -54,6 +63,7 @@ const CompanySetup = () => {
             });
             if (res.data.success) {
                 toast.success(res.data.message);
+                // Go back to the companies list after a successful update
                 navigate("/admin/companies");
             }
         } catch (error) {
@@ -64,6 +74,7 @@ const CompanySetup = () => {
         }
     }
 
+    // Runs whenever the loaded company changes, to fill the form with its current values
     useEffect(() => {
         setInput({
             name: singleCompany.name || "",
@@ -133,6 +144,7 @@ const CompanySetup = () => {
                         </div>
                     </div>
                     {
+                        // Show a spinner button while saving, otherwise show the normal submit button
                         loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Update</Button>
                     }
                 </form>

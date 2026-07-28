@@ -5,12 +5,15 @@ import { useDispatch } from 'react-redux';
 import { setSearchedQuery } from '@/redux/jobSlice';
 import { useNavigate } from 'react-router-dom';
 
+// Shows the big banner on the home page with a search box to look up jobs
 const HeroSection = () => {
     const [query, setQuery] = useState("");
     const dispatch = useDispatch();
+    // Used to go to the /browse page after searching
     const navigate = useNavigate();
 
     const searchJobHandler = () => {
+        // Save the typed search text in Redux so the Browse page can filter jobs by it
         dispatch(setSearchedQuery(query));
         navigate("/browse");
     }

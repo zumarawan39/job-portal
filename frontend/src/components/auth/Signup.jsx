@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setLoading } from '@/redux/authSlice'
 import { Loader2 } from 'lucide-react'
 
+// Signup form where new users create an account, choosing student or recruiter role
 const Signup = () => {
 
     const [input, setInput] = useState({
@@ -22,16 +23,21 @@ const Signup = () => {
         role: "",
         file: ""
     });
+    // Read whether a signup request is in progress, and the currently logged-in user, from Redux
     const {loading,user} = useSelector(store=>store.auth);
     const dispatch = useDispatch();
+    // Lets us redirect to the login page after successful signup
     const navigate = useNavigate();
 
+    // Update form state whenever a text input changes
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
     }
+    // Update form state with the selected profile picture file
     const changeFileHandler = (e) => {
         setInput({ ...input, file: e.target.files?.[0] });
     }
+    // Sends the signup form data (including profile picture) to the backend to create the account
     const submitHandler = async (e) => {
         e.preventDefault();
         const formData = new FormData();    //formdata object
@@ -45,12 +51,15 @@ const Signup = () => {
         }
 
         try {
+            // Show the loading spinner while the request is in flight
             dispatch(setLoading(true));
+            // Register a new user account on the backend (multipart because it includes a file)
             const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
                 headers: { 'Content-Type': "multipart/form-data" },
                 withCredentials: true,
             });
             if (res.data.success) {
+                // Send the new user to the login page so they can sign in
                 navigate("/login");
                 toast.success(res.data.message);
             }
@@ -62,6 +71,7 @@ const Signup = () => {
         }
     }
 
+    // If a user is already logged in, skip the signup page and go straight home
     useEffect(()=>{
         if(user){
             navigate("/");
@@ -149,6 +159,7 @@ const Signup = () => {
                         </div>
                     </div>
                     {
+                        // Show a spinner button while signing up, otherwise show the normal submit button
                         loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Signup</Button>
                     }
                     <span className='text-sm'>Already have an account? <Link to="/login" className='text-blue-600'>Login</Link></span>

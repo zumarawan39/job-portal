@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Defines what data a "Company" looks like in the database
 const companySchema = new mongoose.Schema({
     name:{
         type:String,
@@ -20,8 +21,8 @@ const companySchema = new mongoose.Schema({
     },
     userId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
+        ref:'User', // the recruiter (User) who owns/registered this company
         required:true
     }
-},{timestamps:true})
+},{timestamps:true}) // adds createdAt and updatedAt automatically
 export const Company = mongoose.model("Company", companySchema);

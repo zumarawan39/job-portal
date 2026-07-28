@@ -10,10 +10,14 @@ import { USER_API_END_POINT } from '@/utils/constant'
 import { setUser } from '@/redux/authSlice'
 import { toast } from 'sonner'
 
+// Shows a popup dialog with a form to edit and save the user's profile details
 const UpdateProfileDialog = ({ open, setOpen }) => {
+    // Tracks whether the update request is in progress, to show a spinner on the button
     const [loading, setLoading] = useState(false);
+    // Read the logged-in user from the auth slice of Redux state, used to pre-fill the form
     const { user } = useSelector(store => store.auth);
 
+    // Holds the current values typed into the form fields
     const [input, setInput] = useState({
         fullname: user?.fullname || "",
         email: user?.email || "",
@@ -33,6 +37,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         setInput({ ...input, file })
     }
 
+    // Sends the updated profile form data to the backend when the form is submitted
     const submitHandler = async (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -46,6 +51,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         }
         try {
             setLoading(true);
+            // Send the profile form data (including the resume file) to the backend to update the user's profile
             const res = await axios.post(`${USER_API_END_POINT}/profile/update`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -53,6 +59,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                 withCredentials: true
             });
             if (res.data.success) {
+                // Store the updated user in Redux so the rest of the app reflects the changes
                 dispatch(setUser(res.data.user));
                 toast.success(res.data.message);
             }
@@ -143,6 +150,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                         </div>
                         <DialogFooter>
                             {
+                                // Show a spinner while saving, otherwise show the submit button
                                 loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Update</Button>
                             }
                         </DialogFooter>

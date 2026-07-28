@@ -1,3 +1,4 @@
+// A styled text input field component (wraps the plain HTML <input> element)
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

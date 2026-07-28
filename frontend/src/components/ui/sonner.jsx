@@ -1,3 +1,4 @@
+// A toast/notification popup component using the "sonner" library; shows temporary messages and adapts to light/dark theme
 import { useTheme } from "next-themes"
 import { Toaster as Sonner } from "sonner"
 

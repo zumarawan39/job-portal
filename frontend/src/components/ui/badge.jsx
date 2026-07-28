@@ -1,3 +1,4 @@
+// A small styled label/badge component (e.g. for tags or status), with different color variants
 import * as React from "react"
 import { cva } from "class-variance-authority";
 

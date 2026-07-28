@@ -2,7 +2,9 @@ import React from 'react'
 import { Badge } from './ui/badge'
 import { useNavigate } from 'react-router-dom'
 
+// Shows a clickable card for one job on the home page's "Latest Jobs" section
 const LatestJobCards = ({job}) => {
+    // Used to go to this job's details page when the card is clicked
     const navigate = useNavigate();
     return (
         <div onClick={()=> navigate(`/description/${job._id}`)} className='p-5 rounded-md shadow-xl bg-white border border-gray-100 cursor-pointer'>

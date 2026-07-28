@@ -1,3 +1,4 @@
+// A small floating panel component (popover) that appears near a trigger element, built on Radix UI
 import * as React from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
 

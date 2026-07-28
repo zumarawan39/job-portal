@@ -10,12 +10,16 @@ import { toast } from 'sonner'
 import { useDispatch } from 'react-redux'
 import { setSingleCompany } from '@/redux/companySlice'
 
+// First step of creating a new company: just asking for a name (admin only)
 const CompanyCreate = () => {
+    // Lets us send the user to the full company setup page after creating it
     const navigate = useNavigate();
     const [companyName, setCompanyName] = useState();
     const dispatch = useDispatch();
+    // Sends the new company name to the backend to create the company
     const registerNewCompany = async () => {
         try {
+            // Create a new company with just a name
             const res = await axios.post(`${COMPANY_API_END_POINT}/register`, {companyName}, {
                 headers:{
                     'Content-Type':'application/json'
@@ -23,9 +27,11 @@ const CompanyCreate = () => {
                 withCredentials:true
             });
             if(res?.data?.success){
+                // Save the newly created company in Redux so other pages can use it
                 dispatch(setSingleCompany(res.data.company));
                 toast.success(res.data.message);
                 const companyId = res?.data?.company?._id;
+                // Go to the full setup page for this new company
                 navigate(`/admin/companies/${companyId}`);
             }
         } catch (error) {

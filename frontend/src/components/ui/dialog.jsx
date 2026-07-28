@@ -1,3 +1,4 @@
+// A modal/popup dialog box component built on top of Radix UI's Dialog primitive
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"

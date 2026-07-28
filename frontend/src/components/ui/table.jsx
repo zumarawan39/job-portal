@@ -1,3 +1,4 @@
+// A set of styled table components (Table, TableHeader, TableRow, etc.) wrapping plain HTML <table> elements
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

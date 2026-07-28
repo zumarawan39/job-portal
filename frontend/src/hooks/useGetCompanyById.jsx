@@ -5,8 +5,10 @@ import axios from 'axios'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
+// Custom hook: fetches one company's details by its ID and saves it to Redux
 const useGetCompanyById = (companyId) => {
     const dispatch = useDispatch();
+    // Re-runs whenever the companyId changes, so switching companies refetches data
     useEffect(()=>{
         const fetchSingleCompany = async () => {
             try {

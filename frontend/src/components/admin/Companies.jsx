@@ -8,13 +8,19 @@ import useGetAllCompanies from '@/hooks/useGetAllCompanies'
 import { useDispatch } from 'react-redux'
 import { setSearchCompanyByText } from '@/redux/companySlice'
 
+// Page for admins to see all their registered companies, search them, and add new ones
 const Companies = () => {
+    // Custom hook that fetches all companies belonging to this admin/recruiter
     useGetAllCompanies();
+    // Text typed into the search box
     const [input, setInput] = useState("");
+    // Lets us send the user to another page (like the create company page)
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    // Runs every time the search text changes, so the company list stays filtered live
     useEffect(()=>{
+        // Save the search text in Redux so the table component can filter companies by it
         dispatch(setSearchCompanyByText(input));
     },[input]);
     return (

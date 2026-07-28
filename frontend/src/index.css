@@ -1,7 +1,9 @@
+/* Loads Tailwind's base styles, component classes, and utility classes */
 @tailwind base;
   @tailwind components;
   @tailwind utilities;
 
+  /* Color variables for the shadcn/ui theme (light mode values) */
   @layer base {
     :root {
       --background: 0 0% 100%;
@@ -35,6 +37,7 @@
       --radius: 0.5rem;
     }
 
+    /* Color variables for dark mode (used if dark mode is ever enabled) */
     .dark {
       --background: 222.2 84% 4.9%;
       --foreground: 210 40% 98%;
@@ -66,6 +69,7 @@
     }
   }
 
+  /* Apply the theme's default border color and background/text colors everywhere */
   @layer base {
     * {
       @apply border-border;

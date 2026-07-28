@@ -1,5 +1,6 @@
 import React from 'react';
 
+// Simple footer with copyright text and social media links, shown on every page
 const Footer = () => {
   return (
     <footer className="border-t border-t-gray-200 py-8">

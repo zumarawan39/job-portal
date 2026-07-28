@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Defines what data a "Job" posting looks like in the database
 const jobSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -34,19 +35,19 @@ const jobSchema = new mongoose.Schema({
     },
     company: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
+        ref: 'Company', // which company posted this job
         required: true
     },
     created_by: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'User', // which recruiter (User) created this job
         required: true
     },
     applications: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Application',
+            ref: 'Application', // list of applications submitted for this job
         }
     ]
-},{timestamps:true});
+},{timestamps:true}); // adds createdAt and updatedAt automatically
 export const Job = mongoose.model("Job", jobSchema);
