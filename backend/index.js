@@ -3,12 +3,16 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
+import { createServer } from "http";
+import { Server } from "socket.io";
 import connectDB from "./utils/db.js";
 import userRoute from "./routes/user.route.js";
 import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
 import notificationRoute from "./routes/notification.route.js";
+import messageRoute from "./routes/message.route.js";
+import { registerChatSocket } from "./sockets/chatSocket.js";
 
 // Load variables from the .env file into process.env
 dotenv.config({});
@@ -45,10 +49,34 @@ app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/notification", notificationRoute);
+app.use("/api/v1/message", messageRoute);
 
+// Socket.io needs to attach to the raw http server, not directly to the express app
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+    cors: {
+        origin: allowedOrigins,
+        credentials: true
+    }
+});
+registerChatSocket(io); // wire up the real-time chat "join_room"/"send_message" events
 
+// Start the server, then connect to the database.
+// If the port is already taken, keep trying the next one instead of crashing.
+const startServer = (port) => {
+    const server = httpServer.listen(port, () => {
+        connectDB();
+        console.log(`Server running at port ${port}`);
+    });
 
-app.listen(PORT,()=>{
-    connectDB();
-    console.log(`Server running at port ${PORT}`);
-})
+    server.on("error", (err) => {
+        if (err.code === "EADDRINUSE") {
+            console.log(`Port ${port} is in use, trying port ${port + 1}...`);
+            startServer(port + 1);
+        } else {
+            throw err;
+        }
+    });
+};
+
+startServer(PORT);
