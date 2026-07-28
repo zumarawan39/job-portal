@@ -16,6 +16,7 @@ const jobSlice = createSlice({
             salaryMin:"",
             salaryMax:"",
         },
+        recommendedJobs:[],
     },
     reducers:{
         // actions
@@ -55,6 +56,10 @@ const jobSlice = createSlice({
                 salaryMin:"",
                 salaryMax:"",
             };
+        },
+        // Stores the skill-based recommended jobs for the logged-in student
+        setRecommendedJobs:(state,action) => {
+            state.recommendedJobs = action.payload;
         }
     }
 });
@@ -66,6 +71,7 @@ export const {
     setAllAppliedJobs,
     setSearchedQuery,
     setFilters,
-    clearFilters
+    clearFilters,
+    setRecommendedJobs
 } = jobSlice.actions;
 export default jobSlice.reducer;

@@ -1,4 +1,5 @@
 import { Job } from "../models/job.model.js";
+import { User } from "../models/user.model.js";
 
 // Recruiter/admin creates a new job posting
 export const postJob = async (req, res) => {
@@ -124,6 +125,60 @@ export const getAdminJobs = async (req, res) => {
         return res.status(200).json({
             jobs,
             success: true
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
+// Suggest jobs for the logged-in student based on the skills on their profile
+export const getRecommendedJobs = async (req, res) => {
+    try {
+        const user = await User.findById(req.id);
+        const skills = (user?.profile?.skills || []).map(s => s.toLowerCase());
+
+        // no skills on file yet - just show the newest jobs
+        if (skills.length === 0) {
+            const jobs = await Job.find().populate('company').sort({ createdAt: -1 }).limit(6);
+            return res.status(200).json({
+                success: true,
+                jobs
+            })
+        }
+
+        const allJobs = await Job.find().populate('company');
+
+        // score each job by how many of the user's skills show up in its title/description/requirements
+        const scoredJobs = allJobs.map(job => {
+            const text = `${job.title} ${job.description} ${(job.requirements || []).join(' ')}`.toLowerCase();
+            const score = skills.filter(skill => text.includes(skill)).length;
+            return { job, score };
+        });
+
+        // best matches first, newest first as a tiebreaker
+        scoredJobs.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return new Date(b.job.createdAt) - new Date(a.job.createdAt);
+        });
+
+        const matched = scoredJobs.filter(j => j.score > 0).map(j => j.job);
+        let jobs = matched.slice(0, 6);
+
+        // not enough matches - fill the rest with the newest jobs not already included
+        if (jobs.length < 6) {
+            const includedIds = new Set(jobs.map(j => j._id.toString()));
+            const remaining = allJobs
+                .filter(j => !includedIds.has(j._id.toString()))
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            for (const job of remaining) {
+                if (jobs.length >= 6) break;
+                jobs.push(job);
+            }
+        }
+
+        return res.status(200).json({
+            success: true,
+            jobs
         })
     } catch (error) {
         console.log(error);
