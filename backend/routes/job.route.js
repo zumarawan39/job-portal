@@ -1,13 +1,15 @@
 import express from "express";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { getAdminJobs, getAllJobs, getJobById, postJob } from "../controllers/job.controller.js";
+import validate from "../middlewares/validate.js";
+import { postJobSchema } from "../validators/jobValidators.js";
 
 const router = express.Router();
 
-router.route("/post").post(isAuthenticated, postJob);
-router.route("/get").get(isAuthenticated, getAllJobs);
-router.route("/getadminjobs").get(isAuthenticated, getAdminJobs);
-router.route("/get/:id").get(isAuthenticated, getJobById);
+// All routes below require the user to be logged in (isAuthenticated)
+router.route("/post").post(isAuthenticated, validate(postJobSchema), postJob); // recruiter creates a new job
+router.route("/get").get(isAuthenticated, getAllJobs); // student browses/searches all jobs
+router.route("/getadminjobs").get(isAuthenticated, getAdminJobs); // recruiter sees jobs they created
+router.route("/get/:id").get(isAuthenticated, getJobById); // get one job by its id
 
 export default router;
-
