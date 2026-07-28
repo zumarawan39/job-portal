@@ -3,6 +3,7 @@ import { Job } from "../models/job.model.js";
 import { Notification } from "../models/notification.model.js";
 import { User } from "../models/user.model.js";
 import sendEmail from "../utils/sendEmail.js";
+import createVideoRoom from "../utils/dailyVideo.js";
 
 // Let a logged-in student apply to a job
 export const applyJob = async (req, res) => {
@@ -156,6 +157,62 @@ export const updateStatus = async (req,res) => {
             success:true
         });
 
+    } catch (error) {
+        console.log(error);
+    }
+}
+// Recruiter schedules an interview (date/time + a meeting link they paste in from Google Meet/Zoom/etc)
+export const scheduleInterview = async (req, res) => {
+    try {
+        const applicationId = req.params.id;
+        const { scheduledAt, meetingLink, notes } = req.body;
+
+        const application = await Application.findById(applicationId).populate('job');
+        if (!application) {
+            return res.status(404).json({
+                message: "Application not found.",
+                success: false
+            })
+        };
+
+        // only the recruiter who owns this job can schedule an interview for it
+        if (application.job.created_by.toString() !== req.id) {
+            return res.status(403).json({
+                message: "Not authorized.",
+                success: false
+            })
+        };
+
+        // if the recruiter didn't paste in their own meeting link, try to auto-create one via
+        // Daily.co - falls back to whatever (or nothing) the recruiter provided if that fails
+        let finalMeetingLink = meetingLink;
+        if (!finalMeetingLink) {
+            const autoRoomUrl = await createVideoRoom();
+            if (autoRoomUrl) {
+                finalMeetingLink = autoRoomUrl;
+            }
+        }
+
+        application.interview = { scheduledAt, meetingLink: finalMeetingLink, notes };
+        await application.save();
+
+        // let the applicant know an interview was scheduled by creating an in-app notification
+        try {
+            await Notification.create({
+                user: application.applicant,
+                message: `An interview has been scheduled for your application to "${application.job.title}".`,
+                type: 'application_status',
+                relatedJob: application.job._id
+            });
+        } catch (error) {
+            console.log(error);
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Interview scheduled.",
+            application
+        });
     } catch (error) {
         console.log(error);
     }

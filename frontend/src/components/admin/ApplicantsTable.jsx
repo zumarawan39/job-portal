@@ -3,12 +3,15 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 import { MoreHorizontal } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import { APPLICATION_API_END_POINT } from '@/utils/constant';
 import axios from 'axios';
 import ChatBox from '../chat/ChatBox';
+import InterviewDetails from '../InterviewDetails';
 
 const shortlistingStatus = ["Accepted", "Rejected"];
 
@@ -19,6 +22,10 @@ const ApplicantsTable = () => {
     const { applicants } = useSelector(store => store.application);
     // Tracks which application's chat dialog is currently open (null = none)
     const [chatApplicationId, setChatApplicationId] = useState(null);
+    // Tracks which application's interview-scheduling dialog is currently open (null = none)
+    const [scheduleApplicationId, setScheduleApplicationId] = useState(null);
+    const [interviewInput, setInterviewInput] = useState({ scheduledAt: "", meetingLink: "", notes: "" });
+    const [scheduling, setScheduling] = useState(false);
 
     // Sends a request to update one applicant's status (Accepted/Rejected)
     const statusHandler = async (status, id) => {
@@ -33,6 +40,33 @@ const ApplicantsTable = () => {
             }
         } catch (error) {
             toast.error(error.response.data.message);
+        }
+    }
+
+    const openScheduleDialog = (id) => {
+        setInterviewInput({ scheduledAt: "", meetingLink: "", notes: "" });
+        setScheduleApplicationId(id);
+    }
+
+    const scheduleInputChangeHandler = (e) => {
+        setInterviewInput({ ...interviewInput, [e.target.name]: e.target.value });
+    }
+
+    // Submits the interview scheduling form for the currently open application
+    const scheduleSubmitHandler = async (e) => {
+        e.preventDefault();
+        try {
+            setScheduling(true);
+            const res = await axios.post(`${APPLICATION_API_END_POINT}/${scheduleApplicationId}/schedule-interview`, interviewInput, { withCredentials: true });
+            if (res.data.success) {
+                toast.success(res.data.message);
+                setScheduleApplicationId(null);
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error.response?.data?.message || "Something went wrong");
+        } finally {
+            setScheduling(false);
         }
     }
 
@@ -68,7 +102,9 @@ const ApplicantsTable = () => {
                                 <TableCell>
                                     <div className='flex items-center gap-2'>
                                         <Button size="sm" variant="outline" onClick={() => setChatApplicationId(item._id)}>Message</Button>
+                                        <Button size="sm" className="bg-[#6A38C2] hover:bg-[#5b30a6]" onClick={() => openScheduleDialog(item._id)}>Schedule Interview</Button>
                                     </div>
+                                    <InterviewDetails interview={item.interview} />
                                 </TableCell>
                                 <TableCell className="float-right cursor-pointer">
                                     <Popover>
@@ -108,6 +144,54 @@ const ApplicantsTable = () => {
                     {
                         chatApplicationId && <ChatBox applicationId={chatApplicationId} />
                     }
+                </DialogContent>
+            </Dialog>
+
+            {/* Schedule interview dialog */}
+            <Dialog open={!!scheduleApplicationId}>
+                <DialogContent className="sm:max-w-[425px]" onInteractOutside={() => setScheduleApplicationId(null)}>
+                    <DialogHeader>
+                        <DialogTitle>Schedule Interview</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={scheduleSubmitHandler}>
+                        <div className='grid gap-4 py-4'>
+                            <div>
+                                <Label htmlFor="scheduledAt">Date &amp; Time</Label>
+                                <Input
+                                    id="scheduledAt"
+                                    name="scheduledAt"
+                                    type="datetime-local"
+                                    value={interviewInput.scheduledAt}
+                                    onChange={scheduleInputChangeHandler}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <Label htmlFor="meetingLink">Meeting Link</Label>
+                                <Input
+                                    id="meetingLink"
+                                    name="meetingLink"
+                                    type="text"
+                                    value={interviewInput.meetingLink}
+                                    onChange={scheduleInputChangeHandler}
+                                    placeholder="Paste a Google Meet / Zoom link"
+                                />
+                            </div>
+                            <div>
+                                <Label htmlFor="notes">Notes</Label>
+                                <textarea
+                                    id="notes"
+                                    name="notes"
+                                    value={interviewInput.notes}
+                                    onChange={scheduleInputChangeHandler}
+                                    rows={3}
+                                    className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                    placeholder="Any details the candidate should know"
+                                />
+                            </div>
+                        </div>
+                        <Button type="submit" className="w-full" disabled={scheduling}>{scheduling ? "Scheduling..." : "Schedule"}</Button>
+                    </form>
                 </DialogContent>
             </Dialog>
         </div>

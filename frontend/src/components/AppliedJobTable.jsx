@@ -5,6 +5,7 @@ import { Button } from './ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { useSelector } from 'react-redux'
 import ChatBox from './chat/ChatBox'
+import InterviewDetails from './InterviewDetails'
 
 // Shows a table listing all the jobs the logged-in user has applied to
 const AppliedJobTable = () => {
@@ -36,6 +37,8 @@ const AppliedJobTable = () => {
                                 <TableCell>{appliedJob.job?.company?.name}</TableCell>
                                 <TableCell>
                                     <Badge className={`${appliedJob?.status === "rejected" ? 'bg-red-400' : appliedJob.status === 'pending' ? 'bg-gray-400' : 'bg-green-400'}`}>{appliedJob.status.toUpperCase()}</Badge>
+                                    {/* If a recruiter has scheduled an interview for this application, show the details here */}
+                                    <InterviewDetails interview={appliedJob.interview} />
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <Button size="sm" variant="outline" onClick={() => setChatApplicationId(appliedJob._id)}>Message</Button>
