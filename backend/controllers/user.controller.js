@@ -4,20 +4,26 @@ import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
 
+// Sign up a new user (student or recruiter)
 export const register = async (req, res) => {
     try {
         const { fullname, email, phoneNumber, password, role } = req.body;
-         
+
         if (!fullname || !email || !phoneNumber || !password || !role) {
             return res.status(400).json({
                 message: "Something is missing",
                 success: false
             });
         };
-        const file = req.file;
-        const fileUri = getDataUri(file);
-        const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+        // upload the profile photo to cloudinary and get its public URL, if one was provided
+        let profilePhoto = "";
+        if (req.file) {
+            const fileUri = getDataUri(req.file);
+            const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+            profilePhoto = cloudResponse.secure_url;
+        }
 
+        // make sure no other account already uses this email
         const user = await User.findOne({ email });
         if (user) {
             return res.status(400).json({
@@ -25,6 +31,7 @@ export const register = async (req, res) => {
                 success: false,
             })
         }
+        // never store plain text passwords - hash it first
         const hashedPassword = await bcrypt.hash(password, 10);
 
         await User.create({
@@ -34,7 +41,7 @@ export const register = async (req, res) => {
             password: hashedPassword,
             role,
             profile:{
-                profilePhoto:cloudResponse.secure_url,
+                profilePhoto,
             }
         });
 
@@ -46,10 +53,11 @@ export const register = async (req, res) => {
         console.log(error);
     }
 }
+// Log in an existing user and give them a login token (stored in a cookie)
 export const login = async (req, res) => {
     try {
         const { email, password, role } = req.body;
-        
+
         if (!email || !password || !role) {
             return res.status(400).json({
                 message: "Something is missing",
@@ -63,6 +71,7 @@ export const login = async (req, res) => {
                 success: false,
             })
         }
+        // compare the typed password with the hashed password saved in the database
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
             return res.status(400).json({
@@ -78,11 +87,13 @@ export const login = async (req, res) => {
             })
         };
 
+        // create a signed JWT token that proves who the user is, valid for 1 day
         const tokenData = {
             userId: user._id
         }
         const token = await jwt.sign(tokenData, process.env.SECRET_KEY, { expiresIn: '1d' });
 
+        // only send back safe fields to the frontend (no password)
         user = {
             _id: user._id,
             fullname: user.fullname,
@@ -92,7 +103,10 @@ export const login = async (req, res) => {
             profile: user.profile
         }
 
-        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpsOnly: true, sameSite: 'strict' }).json({
+        // save the token in an httpOnly cookie so JavaScript on the frontend can't read it directly
+        // (fixed a typo here: it must be "httpOnly", not "httpsOnly" - the old spelling was
+        // silently ignored by the cookie library, so the security flag never actually applied)
+        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'strict' }).json({
             message: `Welcome back ${user.fullname}`,
             user,
             success: true
@@ -101,6 +115,7 @@ export const login = async (req, res) => {
         console.log(error);
     }
 }
+// Log out by clearing the login token cookie
 export const logout = async (req, res) => {
     try {
         return res.status(200).cookie("token", "", { maxAge: 0 }).json({
@@ -111,20 +126,22 @@ export const logout = async (req, res) => {
         console.log(error);
     }
 }
+// Update the logged-in user's profile info (and optionally their resume file)
 export const updateProfile = async (req, res) => {
     try {
         const { fullname, email, phoneNumber, bio, skills } = req.body;
-        
+
+        // upload the new resume file to cloudinary and get its public URL, if one was provided
         const file = req.file;
-        // cloudinary ayega idhar
-        const fileUri = getDataUri(file);
-        const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-
-
+        let cloudResponse;
+        if (file) {
+            const fileUri = getDataUri(file);
+            cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+        }
 
         let skillsArray;
         if(skills){
-            skillsArray = skills.split(",");
+            skillsArray = skills.split(","); // turn comma-separated text into an array
         }
         const userId = req.id; // middleware authentication
         let user = await User.findById(userId);
@@ -135,14 +152,14 @@ export const updateProfile = async (req, res) => {
                 success: false
             })
         }
-        // updating data
+        // only update fields that were actually sent in the request
         if(fullname) user.fullname = fullname
         if(email) user.email = email
         if(phoneNumber)  user.phoneNumber = phoneNumber
         if(bio) user.profile.bio = bio
         if(skills) user.profile.skills = skillsArray
-      
-        // resume comes later here...
+
+        // save the new resume file info if one was uploaded
         if(cloudResponse){
             user.profile.resume = cloudResponse.secure_url // save the cloudinary url
             user.profile.resumeOriginalName = file.originalname // Save the original file name
@@ -151,6 +168,7 @@ export const updateProfile = async (req, res) => {
 
         await user.save();
 
+        // only send back safe fields to the frontend (no password)
         user = {
             _id: user._id,
             fullname: user.fullname,
