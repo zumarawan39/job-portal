@@ -18,3 +18,4 @@ router.route("/verify-otp").post(authLimiter,verifyLoginOtp); // verify emailed 
 router.route("/two-factor").post(isAuthenticated,validate(toggleTwoFactorSchema),toggleTwoFactor); // turn 2FA on/off for the logged-in user
 
 export default router;
+

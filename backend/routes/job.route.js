@@ -16,3 +16,4 @@ router.route("/saved").get(isAuthenticated, getSavedJobs); // get all saved jobs
 router.route("/get/:id").get(isAuthenticated, getJobById); // get one job by its id
 
 export default router;
+

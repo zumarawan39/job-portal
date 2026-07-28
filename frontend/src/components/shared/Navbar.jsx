@@ -13,15 +13,18 @@ import useGetNotifications from '@/hooks/useGetNotifications'
 import useGetSavedJobs from '@/hooks/useGetSavedJobs'
 import { toast } from 'sonner'
 
+// Top navigation bar shown on every page, with links and login/logout controls
 const Navbar = () => {
     // Fetches the logged-in user's notifications and keeps them in Redux
     useGetNotifications();
     // Fetches the logged-in student's saved job ids and keeps them in Redux
     useGetSavedJobs();
+    // Read the logged-in user from Redux (null if nobody is logged in), used to decide what links/buttons to show
     const { user } = useSelector(store => store.auth);
     // Read notifications + unread count from the notification slice
     const { notifications, unreadCount } = useSelector(store => store.notification);
     const dispatch = useDispatch();
+    // Lets us send the user to the home page after logging out
     const navigate = useNavigate();
 
     // Marks a single notification as read, both on the backend and in Redux
@@ -55,10 +58,13 @@ const Navbar = () => {
         return new Date(dateStr).toLocaleDateString();
     }
 
+    // Logs the user out by clearing their session on the backend and in Redux
     const logoutHandler = async () => {
         try {
+            // Ask the backend to clear the login session/cookie
             const res = await axios.get(`${USER_API_END_POINT}/logout`, { withCredentials: true });
             if (res.data.success) {
+                // Clear the logged-in user from Redux so the app treats us as logged out
                 dispatch(setUser(null));
                 navigate("/");
                 toast.success(res.data.message);

@@ -15,3 +15,4 @@ router.route("/:id/schedule-interview").post(isAuthenticated, validate(scheduleI
 
 
 export default router;
+

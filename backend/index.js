@@ -40,11 +40,13 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Number(...) matters here - process.env.PORT is always a text string, and without
-// converting it, "8000" + 1 would give the wrong string "80001" instead of the number 8001.
+// converting it, "8000" + 1 would give the wrong string "80001" instead of the number 8001
+// when the retry-on-busy-port logic below kicks in.
 const PORT = Number(process.env.PORT) || 3000;
 
 
 // api's
+// Every route below is grouped under its own base path
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
