@@ -1,77 +1,94 @@
+// Sets up the app's page routing and defines the top-level page component
+import React, { Suspense, lazy } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { Loader2 } from 'lucide-react'
 import Navbar from './components/shared/Navbar'
-import Login from './components/auth/Login'
-import Signup from './components/auth/Signup'
-import Home from './components/Home'
-import Jobs from './components/Jobs'
-import Browse from './components/Browse'
-import Profile from './components/Profile'
-import JobDescription from './components/JobDescription'
-import Companies from './components/admin/Companies'
-import CompanyCreate from './components/admin/CompanyCreate'
-import CompanySetup from './components/admin/CompanySetup'
-import AdminJobs from "./components/admin/AdminJobs";
-import PostJob from './components/admin/PostJob'
-import Applicants from './components/admin/Applicants'
 import ProtectedRoute from './components/admin/ProtectedRoute'
 
+// Route-level pages are lazy-loaded so the initial bundle only ships the code needed
+// for whichever page the user actually lands on (smaller first load, code-split per route)
+const Login = lazy(() => import('./components/auth/Login'))
+const Signup = lazy(() => import('./components/auth/Signup'))
+const Home = lazy(() => import('./components/Home'))
+const Jobs = lazy(() => import('./components/Jobs'))
+const Browse = lazy(() => import('./components/Browse'))
+const Profile = lazy(() => import('./components/Profile'))
+const JobDescription = lazy(() => import('./components/JobDescription'))
+const Companies = lazy(() => import('./components/admin/Companies'))
+const CompanyCreate = lazy(() => import('./components/admin/CompanyCreate'))
+const CompanySetup = lazy(() => import('./components/admin/CompanySetup'))
+const AdminJobs = lazy(() => import('./components/admin/AdminJobs'))
+const PostJob = lazy(() => import('./components/admin/PostJob'))
+const Applicants = lazy(() => import('./components/admin/Applicants'))
 
+// Simple centered spinner shown while a lazy-loaded page chunk is being fetched
+const PageLoader = () => (
+  <div className='flex items-center justify-center h-[80vh]'>
+    <Loader2 className='h-8 w-8 animate-spin text-[#6A38C2]' />
+  </div>
+)
+
+// Small helper so every route element gets the same Suspense wrapping without repeating it
+const withSuspense = (element) => <Suspense fallback={<PageLoader />}>{element}</Suspense>
+
+// List of all pages (routes) in the app and which component renders for each URL
 const appRouter = createBrowserRouter([
   {
     path: '/',
-    element: <Home />
+    element: withSuspense(<Home />)
   },
   {
     path: '/login',
-    element: <Login />
+    element: withSuspense(<Login />)
   },
   {
     path: '/signup',
-    element: <Signup />
+    element: withSuspense(<Signup />)
   },
   {
     path: "/jobs",
-    element: <Jobs />
+    element: withSuspense(<Jobs />)
   },
   {
     path: "/description/:id",
-    element: <JobDescription />
+    element: withSuspense(<JobDescription />)
   },
   {
     path: "/browse",
-    element: <Browse />
+    element: withSuspense(<Browse />)
   },
   {
     path: "/profile",
-    element: <Profile />
+    element: withSuspense(<Profile />)
   },
-  // admin ke liye yha se start hoga
+  // Admin-only routes start here (wrapped in ProtectedRoute so only admins can view them)
   {
     path:"/admin/companies",
-    element: <ProtectedRoute><Companies/></ProtectedRoute>
+    element: <ProtectedRoute>{withSuspense(<Companies/>)}</ProtectedRoute>
   },
   {
     path:"/admin/companies/create",
-    element: <ProtectedRoute><CompanyCreate/></ProtectedRoute> 
+    element: <ProtectedRoute>{withSuspense(<CompanyCreate/>)}</ProtectedRoute>
   },
   {
     path:"/admin/companies/:id",
-    element:<ProtectedRoute><CompanySetup/></ProtectedRoute> 
+    element:<ProtectedRoute>{withSuspense(<CompanySetup/>)}</ProtectedRoute>
   },
   {
     path:"/admin/jobs",
-    element:<ProtectedRoute><AdminJobs/></ProtectedRoute> 
+    element:<ProtectedRoute>{withSuspense(<AdminJobs/>)}</ProtectedRoute>
   },
   {
     path:"/admin/jobs/create",
-    element:<ProtectedRoute><PostJob/></ProtectedRoute> 
+    element:<ProtectedRoute>{withSuspense(<PostJob/>)}</ProtectedRoute>
   },
   {
     path:"/admin/jobs/:id/applicants",
-    element:<ProtectedRoute><Applicants/></ProtectedRoute> 
+    element:<ProtectedRoute>{withSuspense(<Applicants/>)}</ProtectedRoute>
   },
 
 ])
+// Root component: renders whichever page matches the current URL
 function App() {
 
   return (
