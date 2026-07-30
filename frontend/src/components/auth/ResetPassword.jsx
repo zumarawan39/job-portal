@@ -3,6 +3,7 @@ import Navbar from '../shared/Navbar'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
+import { Card, CardContent, CardHeader } from '../ui/card'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { USER_API_END_POINT } from '@/utils/constant'
@@ -39,25 +40,32 @@ const ResetPassword = () => {
     }
 
     return (
-        <div>
+        <div className='min-h-screen bg-muted/30'>
             <Navbar />
-            <div className='flex items-center justify-center max-w-7xl mx-auto'>
-                <form onSubmit={submitHandler} className='w-1/2 border border-gray-200 rounded-md p-4 my-10'>
-                    <h1 className='font-bold text-xl mb-5'>Reset Password</h1>
-                    <div className='my-2'>
-                        <Label>New Password</Label>
-                        <Input
-                            type="password"
-                            value={password}
-                            name="password"
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter new password"
-                        />
-                    </div>
-                    {
-                        loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Reset Password</Button>
-                    }
-                </form>
+            <div className='flex items-center justify-center px-4 py-16'>
+                <Card className='w-full max-w-md shadow-soft-lg'>
+                    <CardHeader className='space-y-1 text-center'>
+                        <h1 className='text-2xl font-bold'>Reset Password</h1>
+                        <p className='text-sm text-muted-foreground'>Choose a new password for your account</p>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={submitHandler} className='space-y-4'>
+                            <div className='space-y-2'>
+                                <Label>New Password</Label>
+                                <Input
+                                    type="password"
+                                    value={password}
+                                    name="password"
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="Enter new password"
+                                />
+                            </div>
+                            {
+                                loading ? <Button className="w-full"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full">Reset Password</Button>
+                            }
+                        </form>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     )

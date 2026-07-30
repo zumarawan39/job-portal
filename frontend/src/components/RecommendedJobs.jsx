@@ -16,9 +16,10 @@ const RecommendedJobs = () => {
     }
 
     return (
-        <div className='max-w-7xl mx-auto my-20'>
-            <h1 className='text-4xl font-bold'><span className='text-[#6A38C2]'>Recommended </span>For You</h1>
-            <div className='grid grid-cols-3 gap-4 my-5'>
+        <div className='max-w-7xl mx-auto my-20 px-4'>
+            <h1 className='text-3xl font-bold'><span className='text-primary'>Recommended</span> For You</h1>
+            <p className='mt-1 text-sm text-muted-foreground'>Based on the skills listed on your profile.</p>
+            <div className='grid grid-cols-1 gap-5 my-6 sm:grid-cols-2 lg:grid-cols-3'>
                 {
                     recommendedJobs.slice(0, 6).map((job) => <Job key={job._id} job={job} />)
                 }

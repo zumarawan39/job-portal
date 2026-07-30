@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../shared/Navbar'
+import DashboardLayout from '../shared/DashboardLayout'
 import { Input } from '../ui/input'
-import { Button } from '../ui/button' 
-import { useNavigate } from 'react-router-dom' 
-import { useDispatch } from 'react-redux' 
+import { Button } from '../ui/button'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import AdminJobsTable from './AdminJobsTable'
 import useGetAllAdminJobs from '@/hooks/useGetAllAdminJobs'
 import { setSearchJobByText } from '@/redux/jobSlice'
+import { Building2, Briefcase } from 'lucide-react'
+
+const nav = [
+  { to: '/admin/companies', label: 'Companies', icon: Building2 },
+  { to: '/admin/jobs', label: 'Jobs', icon: Briefcase },
+]
 
 // Page for admins to see all jobs they posted, search them, and create new ones
 const AdminJobs = () => {
@@ -27,17 +34,23 @@ const AdminJobs = () => {
   return (
     <div>
       <Navbar />
-      <div className='max-w-6xl mx-auto my-10'>
-        <div className='flex items-center justify-between my-5'>
-          <Input
-            className="w-fit"
-            placeholder="Filter by name, role"
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <Button onClick={() => navigate("/admin/jobs/create")}>New Jobs</Button>
-        </div>
+      <DashboardLayout
+        nav={nav}
+        title="Jobs"
+        description="Manage the jobs you've posted"
+        actions={
+          <>
+            <Input
+              className="w-full sm:w-56"
+              placeholder="Filter by name, role"
+              onChange={(e) => setInput(e.target.value)}
+            />
+            <Button onClick={() => navigate("/admin/jobs/create")}>New Jobs</Button>
+          </>
+        }
+      >
         <AdminJobsTable />
-      </div>
+      </DashboardLayout>
     </div>
   )
 }

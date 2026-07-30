@@ -26,14 +26,15 @@ const CategoryCarousel = () => {
     }
 
     return (
-        <div>
-            <Carousel className="w-full max-w-xl mx-auto my-20">
+        <div className='max-w-2xl mx-auto my-16 px-4'>
+            <p className='mb-4 text-center text-sm font-medium text-muted-foreground'>Or browse by category</p>
+            <Carousel className="w-full">
                 <CarouselContent>
                     {
                         // Render a carousel item with a button for each category
                         category.map((cat, index) => (
-                            <CarouselItem className="md:basis-1/2 lg-basis-1/3">
-                                <Button onClick={()=>searchJobHandler(cat)} variant="outline" className="rounded-full">{cat}</Button>
+                            <CarouselItem key={cat} className="basis-auto">
+                                <Button onClick={()=>searchJobHandler(cat)} variant="outline" className="rounded-full hover:border-primary hover:bg-accent hover:text-accent-foreground">{cat}</Button>
                             </CarouselItem>
                         ))
                     }

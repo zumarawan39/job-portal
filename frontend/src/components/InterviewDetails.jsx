@@ -19,11 +19,11 @@ const InterviewDetails = ({ interview }) => {
     const isDailyRoom = interview.meetingLink?.includes("daily.co");
 
     return (
-        <div className='text-xs text-gray-600 mt-1'>
-            <p>Interview: {new Date(interview.scheduledAt).toLocaleString()}</p>
+        <div className='mt-2 rounded-lg border border-border bg-accent/40 p-2.5 text-xs text-muted-foreground'>
+            <p className='font-medium text-foreground'>Interview: {new Date(interview.scheduledAt).toLocaleString()}</p>
             {
                 interview.notes && (
-                    <p className='mt-0.5'>Notes: {interview.notes}</p>
+                    <p className='mt-1 leading-relaxed'>Notes: {interview.notes}</p>
                 )
             }
             {
@@ -61,7 +61,7 @@ const InterviewDetails = ({ interview }) => {
                             href={interview.meetingLink}
                             target='_blank'
                             rel="noopener noreferrer"
-                            className='text-blue-600 hover:underline'
+                            className='mt-1 inline-block font-medium text-primary hover:underline'
                         >
                             Join meeting
                         </a>

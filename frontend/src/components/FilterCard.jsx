@@ -2,12 +2,16 @@ import React, { useState } from 'react'
 import { RadioGroup, RadioGroupItem } from './ui/radio-group'
 import { Label } from './ui/label'
 import { Button } from './ui/button'
+import { Card, CardContent, CardHeader } from './ui/card'
 import { useDispatch } from 'react-redux'
 import { setFilters, clearFilters } from '@/redux/jobSlice'
+import { X } from 'lucide-react'
 
-// Location and Industry filter options (sent to the backend as-is)
-const locationOptions = ["Delhi NCR", "Bangalore", "Hyderabad", "Pune", "Mumbai"];
-const industryOptions = ["Frontend Developer", "Backend Developer", "FullStack Developer"];
+// Location and Industry filter options (sent to the backend as-is; industry values are
+// matched against job titles via a substring regex on the backend, so these are broad
+// role-family words rather than exact titles)
+const locationOptions = ["Karachi", "Lahore", "Islamabad"];
+const industryOptions = ["Developer", "Engineer", "Analyst", "Marketing"];
 // Salary labels shown to the user, mapped to an explicit numeric min/max range sent to the backend
 const salaryOptions = [
     { label: "0-40k", salaryMin: 0, salaryMax: 40000 },
@@ -49,64 +53,71 @@ const FilterCard = () => {
     }
 
     return (
-        <div className='w-full bg-white p-3 rounded-md'>
-            <div className='flex items-center justify-between'>
-                <h1 className='font-bold text-lg'>Filter Jobs</h1>
-                <Button onClick={clearFiltersHandler} variant="outline" size="sm">Clear Filters</Button>
-            </div>
-            <hr className='mt-3' />
+        <Card className='w-full lg:sticky lg:top-20'>
+            <CardHeader className='flex-row items-center justify-between space-y-0 p-4 pb-3'>
+                <h1 className='font-display text-base font-semibold'>Filter Jobs</h1>
+                <Button
+                    onClick={clearFiltersHandler}
+                    variant="ghost"
+                    size="sm"
+                    className='h-auto gap-1 px-2 py-1 text-xs font-medium text-muted-foreground hover:text-destructive'
+                >
+                    <X className='h-3.5 w-3.5' /> Clear Filters
+                </Button>
+            </CardHeader>
+            <CardContent className='flex flex-col gap-5 p-4 pt-0'>
+                <div>
+                    <h2 className='mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground'>Location</h2>
+                    <RadioGroup value={selectedLocation} onValueChange={locationChangeHandler} className='gap-2.5'>
+                        {
+                            locationOptions.map((item, idx) => {
+                                const itemId = `location-${idx}`
+                                return (
+                                    <div key={itemId} className='flex items-center space-x-2'>
+                                        <RadioGroupItem value={item} id={itemId} />
+                                        <Label htmlFor={itemId} className='cursor-pointer font-normal'>{item}</Label>
+                                    </div>
+                                )
+                            })
+                        }
+                    </RadioGroup>
+                </div>
 
-            <div>
-                <h1 className='font-bold text-lg'>Location</h1>
-                <RadioGroup value={selectedLocation} onValueChange={locationChangeHandler}>
-                    {
-                        locationOptions.map((item, idx) => {
-                            const itemId = `location-${idx}`
-                            return (
-                                <div key={itemId} className='flex items-center space-x-2 my-2'>
-                                    <RadioGroupItem value={item} id={itemId} />
-                                    <Label htmlFor={itemId}>{item}</Label>
-                                </div>
-                            )
-                        })
-                    }
-                </RadioGroup>
-            </div>
+                <div className='border-t border-border pt-4'>
+                    <h2 className='mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground'>Industry</h2>
+                    <RadioGroup value={selectedIndustry} onValueChange={industryChangeHandler} className='gap-2.5'>
+                        {
+                            industryOptions.map((item, idx) => {
+                                const itemId = `industry-${idx}`
+                                return (
+                                    <div key={itemId} className='flex items-center space-x-2'>
+                                        <RadioGroupItem value={item} id={itemId} />
+                                        <Label htmlFor={itemId} className='cursor-pointer font-normal'>{item}</Label>
+                                    </div>
+                                )
+                            })
+                        }
+                    </RadioGroup>
+                </div>
 
-            <div>
-                <h1 className='font-bold text-lg'>Industry</h1>
-                <RadioGroup value={selectedIndustry} onValueChange={industryChangeHandler}>
-                    {
-                        industryOptions.map((item, idx) => {
-                            const itemId = `industry-${idx}`
-                            return (
-                                <div key={itemId} className='flex items-center space-x-2 my-2'>
-                                    <RadioGroupItem value={item} id={itemId} />
-                                    <Label htmlFor={itemId}>{item}</Label>
-                                </div>
-                            )
-                        })
-                    }
-                </RadioGroup>
-            </div>
-
-            <div>
-                <h1 className='font-bold text-lg'>Salary</h1>
-                <RadioGroup value={selectedSalary} onValueChange={salaryChangeHandler}>
-                    {
-                        salaryOptions.map((option, idx) => {
-                            const itemId = `salary-${idx}`
-                            return (
-                                <div key={itemId} className='flex items-center space-x-2 my-2'>
-                                    <RadioGroupItem value={option.label} id={itemId} />
-                                    <Label htmlFor={itemId}>{option.label}</Label>
-                                </div>
-                            )
-                        })
-                    }
-                </RadioGroup>
-            </div>
-        </div>
+                <div className='border-t border-border pt-4'>
+                    <h2 className='mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground'>Salary</h2>
+                    <RadioGroup value={selectedSalary} onValueChange={salaryChangeHandler} className='gap-2.5'>
+                        {
+                            salaryOptions.map((option, idx) => {
+                                const itemId = `salary-${idx}`
+                                return (
+                                    <div key={itemId} className='flex items-center space-x-2'>
+                                        <RadioGroupItem value={option.label} id={itemId} />
+                                        <Label htmlFor={itemId} className='cursor-pointer font-normal'>{option.label}</Label>
+                                    </div>
+                                )
+                            })
+                        }
+                    </RadioGroup>
+                </div>
+            </CardContent>
+        </Card>
     )
 }
 

@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
+import { Card, CardContent, CardHeader } from './ui/card'
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { APPLICATION_API_END_POINT, JOB_API_END_POINT } from '@/utils/constant';
 import { setSingleJob } from '@/redux/jobSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
+import { Briefcase, Calendar, Clock, MapPin, Users, Wallet } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 // Shows full details of a single job and lets the user apply to it
 const JobDescription = () => {
@@ -61,32 +64,70 @@ const JobDescription = () => {
     },[jobId,dispatch, user?._id]);
 
     return (
-        <div className='max-w-7xl mx-auto my-10'>
-            <div className='flex items-center justify-between'>
-                <div>
-                    <h1 className='font-bold text-xl'>{singleJob?.title}</h1>
-                    <div className='flex items-center gap-2 mt-4'>
-                        <Badge className={'text-blue-700 font-bold'} variant="ghost">{singleJob?.postion} Positions</Badge>
-                        <Badge className={'text-[#F83002] font-bold'} variant="ghost">{singleJob?.jobType}</Badge>
-                        <Badge className={'text-[#7209b7] font-bold'} variant="ghost">{singleJob?.salary}LPA</Badge>
-                    </div>
-                </div>
-                <Button
-                onClick={isApplied ? null : applyJobHandler}
-                    disabled={isApplied}
-                    className={`rounded-lg ${isApplied ? 'bg-gray-600 cursor-not-allowed' : 'bg-[#7209b7] hover:bg-[#5f32ad]'}`}>
-                    {isApplied ? 'Already Applied' : 'Apply Now'}
-                </Button>
-            </div>
-            <h1 className='border-b-2 border-b-gray-300 font-medium py-4'>Job Description</h1>
-            <div className='my-4'>
-                <h1 className='font-bold my-1'>Role: <span className='pl-4 font-normal text-gray-800'>{singleJob?.title}</span></h1>
-                <h1 className='font-bold my-1'>Location: <span className='pl-4 font-normal text-gray-800'>{singleJob?.location}</span></h1>
-                <h1 className='font-bold my-1'>Description: <span className='pl-4 font-normal text-gray-800'>{singleJob?.description}</span></h1>
-                <h1 className='font-bold my-1'>Experience: <span className='pl-4 font-normal text-gray-800'>{singleJob?.experience} yrs</span></h1>
-                <h1 className='font-bold my-1'>Salary: <span className='pl-4 font-normal text-gray-800'>{singleJob?.salary}LPA</span></h1>
-                <h1 className='font-bold my-1'>Total Applicants: <span className='pl-4 font-normal text-gray-800'>{singleJob?.applications?.length}</span></h1>
-                <h1 className='font-bold my-1'>Posted Date: <span className='pl-4 font-normal text-gray-800'>{singleJob?.createdAt.split("T")[0]}</span></h1>
+        <div className='max-w-7xl mx-auto my-10 px-4'>
+            <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
+                {/* Main content */}
+                <Card className='lg:col-span-2'>
+                    <CardHeader className='pb-4'>
+                        <h1 className='font-display text-2xl font-bold leading-snug'>{singleJob?.title}</h1>
+                        {
+                            singleJob?.company?.name && (
+                                <p className='text-sm text-muted-foreground'>{singleJob?.company?.name}</p>
+                            )
+                        }
+                        <div className='flex flex-wrap gap-2 pt-2'>
+                            <Badge variant="outline" className="gap-1.5 font-medium">
+                                <Users className='h-3.5 w-3.5' /> {singleJob?.position} Positions
+                            </Badge>
+                            <Badge variant="outline" className="gap-1.5 font-medium">
+                                <Clock className='h-3.5 w-3.5' /> {singleJob?.experienceLevel} yrs experience
+                            </Badge>
+                            <Badge variant="outline" className="gap-1.5 font-medium">
+                                <MapPin className='h-3.5 w-3.5' /> {singleJob?.location}
+                            </Badge>
+                            <Badge variant="secondary" className="gap-1.5 font-medium">
+                                <Briefcase className='h-3.5 w-3.5' /> {singleJob?.jobType}
+                            </Badge>
+                        </div>
+                    </CardHeader>
+                    <CardContent className='pt-0'>
+                        <div className='border-t border-border pt-5'>
+                            <h2 className='mb-2 font-display text-base font-semibold'>Job Description</h2>
+                            <p className='whitespace-pre-line text-sm leading-relaxed text-foreground/80'>{singleJob?.description}</p>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Sticky summary sidebar */}
+                <Card className='h-fit lg:sticky lg:top-20'>
+                    <CardHeader className='pb-3'>
+                        <div className='flex items-center gap-2 font-mono text-2xl font-bold text-brand-orange'>
+                            <Wallet className='h-5 w-5' /> {singleJob?.salary} LPA
+                        </div>
+                        <p className='text-xs text-muted-foreground'>Annual salary</p>
+                    </CardHeader>
+                    <CardContent className='flex flex-col gap-3 pt-0'>
+                        <div className='flex items-center justify-between border-t border-border pt-3 text-sm'>
+                            <span className='flex items-center gap-2 text-muted-foreground'><Users className='h-4 w-4' /> Positions</span>
+                            <span className='font-medium'>{singleJob?.position}</span>
+                        </div>
+                        <div className='flex items-center justify-between text-sm'>
+                            <span className='flex items-center gap-2 text-muted-foreground'><Users className='h-4 w-4' /> Total Applicants</span>
+                            <span className='font-medium'>{singleJob?.applications?.length}</span>
+                        </div>
+                        <div className='flex items-center justify-between text-sm'>
+                            <span className='flex items-center gap-2 text-muted-foreground'><Calendar className='h-4 w-4' /> Posted Date</span>
+                            <span className='font-medium'>{singleJob?.createdAt.split("T")[0]}</span>
+                        </div>
+                        <Button
+                            onClick={isApplied ? null : applyJobHandler}
+                            disabled={isApplied}
+                            className={cn('mt-2 w-full', isApplied && 'cursor-not-allowed bg-muted text-muted-foreground hover:bg-muted')}
+                        >
+                            {isApplied ? 'Already Applied' : 'Apply Now'}
+                        </Button>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     )

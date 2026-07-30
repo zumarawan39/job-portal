@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import Navbar from './shared/Navbar'
-import { Avatar, AvatarImage } from './ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
 import { Contact, Mail, Pen } from 'lucide-react'
 import { Badge } from './ui/badge'
 import { Label } from './ui/label'
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import AppliedJobTable from './AppliedJobTable'
 import UpdateProfileDialog from './UpdateProfileDialog'
 import { useDispatch, useSelector } from 'react-redux'
@@ -42,56 +43,88 @@ const Profile = () => {
     }
 
     return (
-        <div>
+        <div className='min-h-screen bg-background'>
             <Navbar />
-            <div className='max-w-4xl mx-auto bg-white border border-gray-200 rounded-2xl my-5 p-8'>
-                <div className='flex justify-between'>
-                    <div className='flex items-center gap-4'>
-                        <Avatar className="h-24 w-24">
-                            <AvatarImage src="https://www.shutterstock.com/image-vector/circle-line-simple-design-logo-600nw-2174926871.jpg" alt="profile" />
-                        </Avatar>
-                        <div>
-                            <h1 className='font-medium text-xl'>{user?.fullname}</h1>
-                            <p>{user?.profile?.bio}</p>
+            <div className='max-w-4xl mx-auto px-4 py-8 flex flex-col gap-6'>
+                <Card>
+                    <CardContent className="p-8">
+                        <div className='flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center'>
+                            <div className='flex items-center gap-4'>
+                                <Avatar className="h-24 w-24 border border-border">
+                                    {
+                                        user?.profile?.profilePhoto ? (
+                                            <AvatarImage src={user.profile.profilePhoto} alt={user?.fullname} />
+                                        ) : null
+                                    }
+                                    <AvatarFallback className="bg-accent text-2xl font-semibold text-accent-foreground">
+                                        {user?.fullname?.charAt(0)?.toUpperCase() || '?'}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <h1 className='text-xl font-semibold'>{user?.fullname}</h1>
+                                    <p className='text-sm text-muted-foreground'>{user?.profile?.bio}</p>
+                                </div>
+                            </div>
+                            <Button onClick={() => setOpen(true)} variant="outline" size="icon" aria-label="Edit profile">
+                                <Pen className='h-4 w-4' />
+                            </Button>
                         </div>
-                    </div>
-                    <Button onClick={() => setOpen(true)} className="text-right" variant="outline"><Pen /></Button>
-                </div>
-                <div className='flex items-center gap-2 my-2'>
-                    <input type="checkbox" checked={user?.twoFactorEnabled || false} onChange={twoFactorChangeHandler} />
-                    <Label>Enable two-factor login (email code)</Label>
-                </div>
-                <div className='my-5'>
-                    <div className='flex items-center gap-3 my-2'>
-                        <Mail />
-                        <span>{user?.email}</span>
-                    </div>
-                    <div className='flex items-center gap-3 my-2'>
-                        <Contact />
-                        <span>{user?.phoneNumber}</span>
-                    </div>
-                </div>
-                <div className='my-5'>
-                    <h1>Skills</h1>
-                    <div className='flex items-center gap-1'>
-                        {
-                            // Show each skill as a badge, or "NA" if the user has no skills listed
-                            user?.profile?.skills.length !== 0 ? user?.profile?.skills.map((item, index) => <Badge key={index}>{item}</Badge>) : <span>NA</span>
-                        }
-                    </div>
-                </div>
-                <div className='grid w-full max-w-sm items-center gap-1.5'>
-                    <Label className="text-md font-bold">Resume</Label>
-                    {
-                        // Show a link to the uploaded resume, or "NA" if there isn't one
-                        isResume ? <a target='blank' href={user?.profile?.resume} className='text-blue-500 w-full hover:underline cursor-pointer'>{user?.profile?.resumeOriginalName}</a> : <span>NA</span>
-                    }
-                </div>
-            </div>
-            <div className='max-w-4xl mx-auto bg-white rounded-2xl'>
-                <h1 className='font-bold text-lg my-5'>Applied Jobs</h1>
-                {/* Applied Job Table   */}
-                <AppliedJobTable />
+
+                        <div className='flex items-center gap-2 mt-6'>
+                            <label className='relative inline-flex cursor-pointer items-center'>
+                                <input
+                                    type="checkbox"
+                                    className='peer sr-only'
+                                    checked={user?.twoFactorEnabled || false}
+                                    onChange={twoFactorChangeHandler}
+                                />
+                                <span className='h-6 w-11 rounded-full bg-muted transition-colors peer-checked:bg-primary after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-background after:shadow-sm after:transition-transform after:content-[""] peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2'></span>
+                            </label>
+                            <Label className="cursor-default">Enable two-factor login (email code)</Label>
+                        </div>
+
+                        <div className='mt-6 flex flex-col gap-2 text-sm'>
+                            <div className='flex items-center gap-3'>
+                                <Mail className='h-4 w-4 text-muted-foreground' />
+                                <span>{user?.email}</span>
+                            </div>
+                            <div className='flex items-center gap-3'>
+                                <Contact className='h-4 w-4 text-muted-foreground' />
+                                <span>{user?.phoneNumber}</span>
+                            </div>
+                        </div>
+
+                        <div className='mt-6'>
+                            <h2 className='text-sm font-semibold'>Skills</h2>
+                            <div className='mt-2 flex flex-wrap items-center gap-1.5'>
+                                {
+                                    // Show each skill as a badge, or "NA" if the user has no skills listed
+                                    user?.profile?.skills.length !== 0 ? user?.profile?.skills.map((item, index) => <Badge key={index} variant="secondary">{item}</Badge>) : <span className='text-sm text-muted-foreground'>NA</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div className='mt-6'>
+                            <Label className="text-sm font-semibold">Resume</Label>
+                            <div className='mt-1'>
+                                {
+                                    // Show a link to the uploaded resume, or "NA" if there isn't one
+                                    isResume ? <a target='blank' href={user?.profile?.resume} className='text-sm text-primary hover:underline cursor-pointer'>{user?.profile?.resumeOriginalName}</a> : <span className='text-sm text-muted-foreground'>NA</span>
+                                }
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Applied Jobs</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                        {/* Applied Job Table   */}
+                        <AppliedJobTable />
+                    </CardContent>
+                </Card>
             </div>
             <UpdateProfileDialog open={open} setOpen={setOpen}/>
         </div>

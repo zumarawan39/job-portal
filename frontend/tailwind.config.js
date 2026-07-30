@@ -51,6 +51,28 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        // Sparingly-used secondary brand accent (the "orange" half of the JobPortal logo).
+        // Not routed through the semantic token system since it's decorative, not interactive.
+        brand: {
+          orange: "#F83002",
+        },
+      },
+      fontFamily: {
+        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["Sora", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["\"JetBrains Mono\"", "ui-monospace", "monospace"],
+      },
+      boxShadow: {
+        soft: "0 1px 2px 0 rgb(0 0 0 / 0.04), 0 4px 16px -4px rgb(0 0 0 / 0.08)",
+        "soft-lg": "0 2px 4px 0 rgb(0 0 0 / 0.04), 0 12px 32px -8px rgb(0 0 0 / 0.12)",
       },
       borderRadius: {
         lg: "var(--radius)",

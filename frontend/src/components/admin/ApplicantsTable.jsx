@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -72,68 +73,72 @@ const ApplicantsTable = () => {
 
     return (
         <div>
-            <Table>
-                <TableCaption>A list of your recent applied user</TableCaption>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>FullName</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Contact</TableHead>
-                        <TableHead>Resume</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Contact Applicant</TableHead>
-                        <TableHead className="text-right">Action</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {
-                        // Render one row per applicant who applied to this job
-                        applicants && applicants?.applications?.map((item) => (
-                            <tr key={item._id}>
-                                <TableCell>{item?.applicant?.fullname}</TableCell>
-                                <TableCell>{item?.applicant?.email}</TableCell>
-                                <TableCell>{item?.applicant?.phoneNumber}</TableCell>
-                                <TableCell >
-                                    {
-                                        item.applicant?.profile?.resume ? <a className="text-blue-600 cursor-pointer" href={item?.applicant?.profile?.resume} target="_blank" rel="noopener noreferrer">{item?.applicant?.profile?.resumeOriginalName}</a> : <span>NA</span>
-                                    }
-                                </TableCell>
-                                <TableCell>{item?.applicant.createdAt.split("T")[0]}</TableCell>
-                                <TableCell>
-                                    <div className='flex items-center gap-2'>
-                                        <Button size="sm" variant="outline" onClick={() => setChatApplicationId(item._id)}>Message</Button>
-                                        <Button size="sm" className="bg-[#6A38C2] hover:bg-[#5b30a6]" onClick={() => openScheduleDialog(item._id)}>Schedule Interview</Button>
-                                    </div>
-                                    <InterviewDetails interview={item.interview} />
-                                </TableCell>
-                                <TableCell className="float-right cursor-pointer">
-                                    <Popover>
-                                        <PopoverTrigger>
-                                            <MoreHorizontal />
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-32">
+            <Card>
+                <CardContent className="p-0">
+                    <Table>
+                        <TableCaption className="pb-4">A list of your recent applied user</TableCaption>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>FullName</TableHead>
+                                <TableHead>Email</TableHead>
+                                <TableHead>Contact</TableHead>
+                                <TableHead>Resume</TableHead>
+                                <TableHead>Date</TableHead>
+                                <TableHead>Contact Applicant</TableHead>
+                                <TableHead className="text-right">Action</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {
+                                // Render one row per applicant who applied to this job
+                                applicants && applicants?.applications?.map((item) => (
+                                    <TableRow key={item._id}>
+                                        <TableCell className="font-medium">{item?.applicant?.fullname}</TableCell>
+                                        <TableCell>{item?.applicant?.email}</TableCell>
+                                        <TableCell>{item?.applicant?.phoneNumber}</TableCell>
+                                        <TableCell >
                                             {
-                                                // Show "Accepted"/"Rejected" options for setting this applicant's status
-                                                shortlistingStatus.map((status, index) => {
-                                                    return (
-                                                        <div onClick={() => statusHandler(status, item?._id)} key={index} className='flex w-fit items-center my-2 cursor-pointer'>
-                                                            <span>{status}</span>
-                                                        </div>
-                                                    )
-                                                })
+                                                item.applicant?.profile?.resume ? <a className="text-primary hover:underline cursor-pointer" href={item?.applicant?.profile?.resume} target="_blank" rel="noopener noreferrer">{item?.applicant?.profile?.resumeOriginalName}</a> : <span className="text-muted-foreground">NA</span>
                                             }
-                                        </PopoverContent>
-                                    </Popover>
+                                        </TableCell>
+                                        <TableCell className="text-muted-foreground">{item?.applicant.createdAt.split("T")[0]}</TableCell>
+                                        <TableCell>
+                                            <div className='flex items-center gap-2'>
+                                                <Button size="sm" variant="outline" onClick={() => setChatApplicationId(item._id)}>Message</Button>
+                                                <Button size="sm" className="bg-primary" onClick={() => openScheduleDialog(item._id)}>Schedule Interview</Button>
+                                            </div>
+                                            <InterviewDetails interview={item.interview} />
+                                        </TableCell>
+                                        <TableCell className="text-right cursor-pointer">
+                                            <Popover>
+                                                <PopoverTrigger className="rounded-md p-1 hover:bg-accent">
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-32 p-1">
+                                                    {
+                                                        // Show "Accepted"/"Rejected" options for setting this applicant's status
+                                                        shortlistingStatus.map((status, index) => {
+                                                            return (
+                                                                <div onClick={() => statusHandler(status, item?._id)} key={index} className='flex w-full items-center rounded-sm px-2 py-1.5 text-sm my-1 cursor-pointer hover:bg-accent hover:text-accent-foreground'>
+                                                                    <span>{status}</span>
+                                                                </div>
+                                                            )
+                                                        })
+                                                    }
+                                                </PopoverContent>
+                                            </Popover>
 
-                                </TableCell>
+                                        </TableCell>
 
-                            </tr>
-                        ))
-                    }
+                                    </TableRow>
+                                ))
+                            }
 
-                </TableBody>
+                        </TableBody>
 
-            </Table>
+                    </Table>
+                </CardContent>
+            </Card>
 
             {/* Chat dialog */}
             <Dialog open={!!chatApplicationId}>

@@ -30,7 +30,7 @@ const SavedJobs = lazy(() => import('./components/SavedJobs'))
 // Simple centered spinner shown while a lazy-loaded page chunk is being fetched
 const PageLoader = () => (
   <div className='flex items-center justify-center h-[80vh]'>
-    <Loader2 className='h-8 w-8 animate-spin text-[#6A38C2]' />
+    <Loader2 className='h-8 w-8 animate-spin text-primary' />
   </div>
 )
 

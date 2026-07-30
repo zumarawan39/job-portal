@@ -12,15 +12,21 @@ import {
     REGISTER,
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2'
 import companySlice from "./companySlice";
 import applicationSlice from "./applicationSlice";
 import notificationSlice from "./notificationSlice";
 
-// Tells redux-persist to save the whole store in the browser's storage under the key "root"
+// Tells redux-persist to save the whole store in the browser's storage under the key "root".
+// Uses autoMergeLevel2 (instead of the default autoMergeLevel1) so that when a new field is
+// added to a slice's initial state later on, a browser with an older persisted slice still
+// gets that new field's default instead of the whole slice - including that field - coming
+// back as undefined and crashing components that read it (e.g. job.filters, job.savedJobIds).
 const persistConfig = {
     key: 'root',
     version: 1,
     storage,
+    stateReconciler: autoMergeLevel2,
 }
 
 // Combines all the separate slices into one big Redux state object

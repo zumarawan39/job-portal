@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../shared/Navbar'
+import DashboardLayout from '../shared/DashboardLayout'
 import { Button } from '../ui/button'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { ArrowLeft, Loader2, Building2, Briefcase } from 'lucide-react'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
+import { Card, CardContent } from '../ui/card'
 import axios from 'axios'
 import { COMPANY_API_END_POINT } from '@/utils/constant'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useSelector } from 'react-redux'
 import useGetCompanyById from '@/hooks/useGetCompanyById'
+
+const nav = [
+    { to: '/admin/companies', label: 'Companies', icon: Building2 },
+    { to: '/admin/jobs', label: 'Jobs', icon: Briefcase },
+]
 
 // Form for editing an existing company's details (name, description, logo, etc.)
 const CompanySetup = () => {
@@ -88,68 +95,76 @@ const CompanySetup = () => {
     return (
         <div>
             <Navbar />
-            <div className='max-w-xl mx-auto my-10'>
-                <form onSubmit={submitHandler}>
-                    <div className='flex items-center gap-5 p-8'>
-                        <Button onClick={() => navigate("/admin/companies")} variant="outline" className="flex items-center gap-2 text-gray-500 font-semibold">
-                            <ArrowLeft />
-                            <span>Back</span>
-                        </Button>
-                        <h1 className='font-bold text-xl'>Company Setup</h1>
-                    </div>
-                    <div className='grid grid-cols-2 gap-4'>
-                        <div>
-                            <Label>Company Name</Label>
-                            <Input
-                                type="text"
-                                name="name"
-                                value={input.name}
-                                onChange={changeEventHandler}
-                            />
-                        </div>
-                        <div>
-                            <Label>Description</Label>
-                            <Input
-                                type="text"
-                                name="description"
-                                value={input.description}
-                                onChange={changeEventHandler}
-                            />
-                        </div>
-                        <div>
-                            <Label>Website</Label>
-                            <Input
-                                type="text"
-                                name="website"
-                                value={input.website}
-                                onChange={changeEventHandler}
-                            />
-                        </div>
-                        <div>
-                            <Label>Location</Label>
-                            <Input
-                                type="text"
-                                name="location"
-                                value={input.location}
-                                onChange={changeEventHandler}
-                            />
-                        </div>
-                        <div>
-                            <Label>Logo</Label>
-                            <Input
-                                type="file"
-                                accept="image/*"
-                                onChange={changeFileHandler}
-                            />
-                        </div>
-                    </div>
-                    {
-                        // Show a spinner button while saving, otherwise show the normal submit button
-                        loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Update</Button>
-                    }
-                </form>
-            </div>
-
+            <DashboardLayout
+                nav={nav}
+                title="Company Setup"
+                description="Update your company's details"
+                actions={
+                    <Button onClick={() => navigate("/admin/companies")} variant="outline" className="flex items-center gap-2">
+                        <ArrowLeft className="h-4 w-4" />
+                        <span>Back</span>
+                    </Button>
+                }
+            >
+                <div className='flex justify-center'>
+                    <Card className="w-full max-w-2xl">
+                        <CardContent className="pt-6">
+                            <form onSubmit={submitHandler}>
+                                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                                    <div>
+                                        <Label>Company Name</Label>
+                                        <Input
+                                            type="text"
+                                            name="name"
+                                            value={input.name}
+                                            onChange={changeEventHandler}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label>Description</Label>
+                                        <Input
+                                            type="text"
+                                            name="description"
+                                            value={input.description}
+                                            onChange={changeEventHandler}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label>Website</Label>
+                                        <Input
+                                            type="text"
+                                            name="website"
+                                            value={input.website}
+                                            onChange={changeEventHandler}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label>Location</Label>
+                                        <Input
+                                            type="text"
+                                            name="location"
+                                            value={input.location}
+                                            onChange={changeEventHandler}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label>Logo</Label>
+                                        <Input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={changeFileHandler}
+                                        />
+                                    </div>
+                                </div>
+                                {
+                                    // Show a spinner button while saving, otherwise show the normal submit button
+                                    loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Update</Button>
+                                }
+                            </form>
+                        </CardContent>
+                    </Card>
+                </div>
+            </DashboardLayout>
         </div>
     )
 }

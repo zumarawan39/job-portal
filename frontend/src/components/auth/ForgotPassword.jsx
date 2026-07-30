@@ -3,6 +3,7 @@ import Navbar from '../shared/Navbar'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
+import { Card, CardContent, CardFooter, CardHeader } from '../ui/card'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { USER_API_END_POINT } from '@/utils/constant'
@@ -36,26 +37,35 @@ const ForgotPassword = () => {
     }
 
     return (
-        <div>
+        <div className='min-h-screen bg-muted/30'>
             <Navbar />
-            <div className='flex items-center justify-center max-w-7xl mx-auto'>
-                <form onSubmit={submitHandler} className='w-1/2 border border-gray-200 rounded-md p-4 my-10'>
-                    <h1 className='font-bold text-xl mb-5'>Forgot Password</h1>
-                    <div className='my-2'>
-                        <Label>Email</Label>
-                        <Input
-                            type="email"
-                            value={email}
-                            name="email"
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="patel@gmail.com"
-                        />
-                    </div>
-                    {
-                        loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Send Reset Link</Button>
-                    }
-                    <span className='text-sm'>Remembered your password? <Link to="/login" className='text-blue-600'>Login</Link></span>
-                </form>
+            <div className='flex items-center justify-center px-4 py-16'>
+                <Card className='w-full max-w-md shadow-soft-lg'>
+                    <CardHeader className='space-y-1 text-center'>
+                        <h1 className='text-2xl font-bold'>Forgot Password</h1>
+                        <p className='text-sm text-muted-foreground'>Enter your email and we'll send you a reset link</p>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={submitHandler} className='space-y-4'>
+                            <div className='space-y-2'>
+                                <Label>Email</Label>
+                                <Input
+                                    type="email"
+                                    value={email}
+                                    name="email"
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="patel@gmail.com"
+                                />
+                            </div>
+                            {
+                                loading ? <Button className="w-full"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full">Send Reset Link</Button>
+                            }
+                        </form>
+                    </CardContent>
+                    <CardFooter className='justify-center'>
+                        <span className='text-sm text-muted-foreground'>Remembered your password? <Link to="/login" className='font-medium text-primary hover:underline'>Login</Link></span>
+                    </CardFooter>
+                </Card>
             </div>
         </div>
     )

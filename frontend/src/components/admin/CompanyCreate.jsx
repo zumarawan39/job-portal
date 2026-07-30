@@ -1,14 +1,22 @@
 import React, { useState } from 'react'
 import Navbar from '../shared/Navbar'
+import DashboardLayout from '../shared/DashboardLayout'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { COMPANY_API_END_POINT } from '@/utils/constant'
 import { toast } from 'sonner'
 import { useDispatch } from 'react-redux'
 import { setSingleCompany } from '@/redux/companySlice'
+import { Building2, Briefcase } from 'lucide-react'
+
+const nav = [
+    { to: '/admin/companies', label: 'Companies', icon: Building2 },
+    { to: '/admin/jobs', label: 'Jobs', icon: Briefcase },
+]
 
 // First step of creating a new company: just asking for a name (admin only)
 const CompanyCreate = () => {
@@ -41,24 +49,29 @@ const CompanyCreate = () => {
     return (
         <div>
             <Navbar />
-            <div className='max-w-4xl mx-auto'>
-                <div className='my-10'>
-                    <h1 className='font-bold text-2xl'>Your Company Name</h1>
-                    <p className='text-gray-500'>What would you like to give your company name? you can change this later.</p>
+            <DashboardLayout nav={nav} title="New Company" description="Give your company a name to get started">
+                <div className='flex justify-center'>
+                    <Card className="w-full max-w-xl">
+                        <CardHeader>
+                            <CardTitle>Your Company Name</CardTitle>
+                            <CardDescription>What would you like to give your company name? you can change this later.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Label>Company Name</Label>
+                            <Input
+                                type="text"
+                                className="my-2"
+                                placeholder="JobHunt, Microsoft etc."
+                                onChange={(e) => setCompanyName(e.target.value)}
+                            />
+                            <div className='flex items-center gap-2 mt-6'>
+                                <Button variant="outline" onClick={() => navigate("/admin/companies")}>Cancel</Button>
+                                <Button onClick={registerNewCompany}>Continue</Button>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
-
-                <Label>Company Name</Label>
-                <Input
-                    type="text"
-                    className="my-2"
-                    placeholder="JobHunt, Microsoft etc."
-                    onChange={(e) => setCompanyName(e.target.value)}
-                />
-                <div className='flex items-center gap-2 my-10'>
-                    <Button variant="outline" onClick={() => navigate("/admin/companies")}>Cancel</Button>
-                    <Button onClick={registerNewCompany}>Continue</Button>
-                </div>
-            </div>
+            </DashboardLayout>
         </div>
     )
 }

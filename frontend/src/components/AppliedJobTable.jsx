@@ -19,7 +19,7 @@ const AppliedJobTable = () => {
             <Table>
                 <TableCaption>A list of your applied jobs</TableCaption>
                 <TableHeader>
-                    <TableRow>
+                    <TableRow className="hover:bg-transparent">
                         <TableHead>Date</TableHead>
                         <TableHead>Job Role</TableHead>
                         <TableHead>Company</TableHead>
@@ -30,13 +30,30 @@ const AppliedJobTable = () => {
                 <TableBody>
                     {
                         // Show a message if there are no applied jobs, otherwise list each applied job as a row
-                        allAppliedJobs.length <= 0 ? <span>You haven't applied any job yet.</span> : allAppliedJobs.map((appliedJob) => (
+                        allAppliedJobs.length <= 0 ? (
+                            <TableRow className="hover:bg-transparent">
+                                <TableCell colSpan={5} className="text-center text-sm text-muted-foreground">
+                                    You haven't applied any job yet.
+                                </TableCell>
+                            </TableRow>
+                        ) : allAppliedJobs.map((appliedJob) => (
                             <TableRow key={appliedJob._id}>
-                                <TableCell>{appliedJob?.createdAt?.split("T")[0]}</TableCell>
-                                <TableCell>{appliedJob.job?.title}</TableCell>
+                                <TableCell className="text-muted-foreground">{appliedJob?.createdAt?.split("T")[0]}</TableCell>
+                                <TableCell className="font-medium">{appliedJob.job?.title}</TableCell>
                                 <TableCell>{appliedJob.job?.company?.name}</TableCell>
                                 <TableCell>
-                                    <Badge className={`${appliedJob?.status === "rejected" ? 'bg-red-400' : appliedJob.status === 'pending' ? 'bg-gray-400' : 'bg-green-400'}`}>{appliedJob.status.toUpperCase()}</Badge>
+                                    <Badge
+                                        variant="outline"
+                                        className={`border-transparent font-semibold ${
+                                            appliedJob?.status === "rejected"
+                                                ? 'bg-destructive text-destructive-foreground'
+                                                : appliedJob.status === 'pending'
+                                                    ? 'bg-warning text-warning-foreground'
+                                                    : 'bg-success text-success-foreground'
+                                        }`}
+                                    >
+                                        {appliedJob.status.toUpperCase()}
+                                    </Badge>
                                     {/* If a recruiter has scheduled an interview for this application, show the details here */}
                                     <InterviewDetails interview={appliedJob.interview} />
                                 </TableCell>
