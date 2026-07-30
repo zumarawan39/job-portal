@@ -26,13 +26,17 @@ const SEED_USER_EMAILS = [
     "student2@test.com",
     "student3@test.com",
 ];
-const SEED_COMPANY_NAMES = ["TechNova Solutions", "Bright Marketing Co", "Skyline Finance Group"];
+// Deliberately distinct from the company/job names in scripts/seedAccounts.js (a separate,
+// unrelated seed script also present in this project) - company names are unique in the
+// DB, so if two seed scripts picked the same name, whichever ran most recently would
+// delete-and-recreate that company out from under the other script's jobs, orphaning them.
+const SEED_COMPANY_NAMES = ["NimbusWorks Technologies", "Meridian Growth Marketing", "Apex Capital Advisors"];
 const SEED_JOB_TITLES = [
     "Frontend React Developer",
     "Backend Node.js Developer",
-    "Digital Marketing Executive",
+    "Digital Marketing Strategist",
     "Marketing Data Analyst",
-    "Junior Financial Analyst",
+    "Associate Financial Analyst",
     "Cloud DevOps Engineer",
 ];
 
@@ -90,9 +94,9 @@ const run = async () => {
 
     // --- companies (one per recruiter) + link back onto the recruiter's profile ---
     const [company1, company2, company3] = await Company.create([
-        { name: "TechNova Solutions", description: "A software house building web & cloud products.", website: "https://technova.example.com", location: "Karachi", userId: recruiter1._id },
-        { name: "Bright Marketing Co", description: "Full-service digital marketing agency.", website: "https://brightmarketing.example.com", location: "Lahore", userId: recruiter2._id },
-        { name: "Skyline Finance Group", description: "Financial services and fintech consulting.", website: "https://skylinefinance.example.com", location: "Islamabad", userId: recruiter3._id },
+        { name: "NimbusWorks Technologies", description: "A software house building web & cloud products.", website: "https://nimbusworks.example.com", location: "Karachi", userId: recruiter1._id },
+        { name: "Meridian Growth Marketing", description: "Full-service digital marketing agency.", website: "https://meridiangrowth.example.com", location: "Lahore", userId: recruiter2._id },
+        { name: "Apex Capital Advisors", description: "Financial services and fintech consulting.", website: "https://apexcapital.example.com", location: "Islamabad", userId: recruiter3._id },
     ]);
     recruiter1.profile.company = company1._id; await recruiter1.save();
     recruiter2.profile.company = company2._id; await recruiter2.save();
@@ -103,9 +107,9 @@ const run = async () => {
     const [job1, job2, job3, job4, job5, job6] = await Job.create([
         { title: "Frontend React Developer", description: "Build and maintain our customer-facing React dashboards.", requirements: ["React", "JavaScript", "CSS", "Tailwind"], salary: 80000, experienceLevel: 2, location: "Karachi", jobType: "Full-time", position: 2, company: company1._id, created_by: recruiter1._id },
         { title: "Backend Node.js Developer", description: "Design and scale our Node.js/MongoDB backend services.", requirements: ["Node.js", "MongoDB", "Express", "JavaScript"], salary: 100000, experienceLevel: 3, location: "Karachi", jobType: "Full-time", position: 1, company: company1._id, created_by: recruiter1._id },
-        { title: "Digital Marketing Executive", description: "Run SEO and social media campaigns for our clients.", requirements: ["SEO", "Content Writing", "Social Media"], salary: 60000, experienceLevel: 1, location: "Lahore", jobType: "Full-time", position: 3, company: company2._id, created_by: recruiter2._id },
+        { title: "Digital Marketing Strategist", description: "Run SEO and social media campaigns for our clients.", requirements: ["SEO", "Content Writing", "Social Media"], salary: 60000, experienceLevel: 1, location: "Lahore", jobType: "Full-time", position: 3, company: company2._id, created_by: recruiter2._id },
         { title: "Marketing Data Analyst", description: "Analyze campaign performance data and report insights.", requirements: ["Python", "SQL", "Data Analysis"], salary: 70000, experienceLevel: 2, location: "Lahore", jobType: "Part-time", position: 1, company: company2._id, created_by: recruiter2._id },
-        { title: "Junior Financial Analyst", description: "Support financial modeling and reporting for clients.", requirements: ["Excel", "Finance", "SQL"], salary: 90000, experienceLevel: 1, location: "Islamabad", jobType: "Full-time", position: 2, company: company3._id, created_by: recruiter3._id },
+        { title: "Associate Financial Analyst", description: "Support financial modeling and reporting for clients.", requirements: ["Excel", "Finance", "SQL"], salary: 90000, experienceLevel: 1, location: "Islamabad", jobType: "Full-time", position: 2, company: company3._id, created_by: recruiter3._id },
         { title: "Cloud DevOps Engineer", description: "Own our AWS infrastructure and CI/CD pipelines.", requirements: ["AWS", "Docker", "Java", "Spring Boot"], salary: 150000, experienceLevel: 3, location: "Islamabad", jobType: "Full-time", position: 1, company: company3._id, created_by: recruiter3._id },
     ]);
     console.log("Created jobs:", 6);
@@ -161,7 +165,7 @@ const run = async () => {
     console.log("\nSeed complete. All test accounts use password: " + PASSWORD);
     console.log(`
 Admin:      admin@test.com
-Recruiters: recruiter1@test.com (TechNova Solutions), recruiter2@test.com (Bright Marketing Co), recruiter3@test.com (Skyline Finance Group)
+Recruiters: recruiter1@test.com (NimbusWorks Technologies), recruiter2@test.com (Meridian Growth Marketing), recruiter3@test.com (Apex Capital Advisors)
 Students:   student1@test.com (Ahmed - React/Node skills), student2@test.com (Fatima - has 2FA ON, Python/SQL skills), student3@test.com (Hassan - Java/AWS skills)
 `);
 

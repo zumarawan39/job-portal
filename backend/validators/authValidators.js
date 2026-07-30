@@ -17,7 +17,7 @@ export const registerSchema = z.object({
 export const loginSchema = z.object({
     email: z.string().email("Enter a valid email address."),
     password: z.string().min(1, "Password is required."),
-    role: z.enum(['student', 'recruiter'])
+    role: z.enum(['student', 'recruiter', 'admin'])
 });
 
 // Validates the "update profile" form's body fields - all optional since this route
