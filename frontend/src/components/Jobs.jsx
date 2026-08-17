@@ -5,11 +5,13 @@ import Job from './Job';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { SearchX } from 'lucide-react';
+import useGetAllJobs from '@/hooks/useGetAllJobs';
 
 // Shows the filter sidebar plus a grid of jobs matching the current search/filter.
-// Filtering now happens on the backend (see useGetAllJobs), so this just renders
-// whatever the backend already returned.
+// Filtering happens on the backend - useGetAllJobs watches searchedQuery/filters in
+// Redux and re-fetches whenever FilterCard dispatches a change.
 const Jobs = () => {
+    useGetAllJobs();
     // Read all (already-filtered) jobs from the job slice of Redux state
     const { allJobs } = useSelector(store => store.job);
 

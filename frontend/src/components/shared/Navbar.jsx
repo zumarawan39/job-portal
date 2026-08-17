@@ -1,7 +1,7 @@
 import React from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Button } from '../ui/button'
-import { Avatar, AvatarImage } from '../ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { LogOut, User2, Bell, Bookmark, LayoutDashboard } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -203,14 +203,20 @@ const Navbar = () => {
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Avatar className="cursor-pointer ring-1 ring-border">
-                                        <AvatarImage src={user?.profile?.profilePhoto} alt={user?.fullname} />
+                                        {user?.profile?.profilePhoto && <AvatarImage src={user.profile.profilePhoto} alt={user?.fullname} />}
+                                        <AvatarFallback className="bg-accent text-sm font-semibold text-accent-foreground">
+                                            {user?.fullname?.charAt(0)?.toUpperCase() || '?'}
+                                        </AvatarFallback>
                                     </Avatar>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-80">
                                     <div className=''>
                                         <div className='flex gap-3'>
                                             <Avatar className="cursor-pointer">
-                                                <AvatarImage src={user?.profile?.profilePhoto} alt={user?.fullname} />
+                                                {user?.profile?.profilePhoto && <AvatarImage src={user.profile.profilePhoto} alt={user?.fullname} />}
+                                                <AvatarFallback className="bg-accent text-sm font-semibold text-accent-foreground">
+                                                    {user?.fullname?.charAt(0)?.toUpperCase() || '?'}
+                                                </AvatarFallback>
                                             </Avatar>
                                             <div className='min-w-0'>
                                                 <h4 className='font-medium truncate'>{user?.fullname}</h4>

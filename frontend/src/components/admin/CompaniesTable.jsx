@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
-import { Avatar, AvatarImage } from '../ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Card, CardContent } from '../ui/card'
 import { Edit2, MoreHorizontal } from 'lucide-react'
@@ -46,7 +46,10 @@ const CompaniesTable = () => {
                                 <TableRow key={company._id}>
                                     <TableCell>
                                         <Avatar className="border border-border">
-                                            <AvatarImage src={company.logo}/>
+                                            {company.logo && <AvatarImage src={company.logo} />}
+                                            <AvatarFallback className="rounded-full bg-accent text-sm font-semibold text-accent-foreground">
+                                                {company.name?.charAt(0)?.toUpperCase() || '?'}
+                                            </AvatarFallback>
                                         </Avatar>
                                     </TableCell>
                                     <TableCell className="font-medium">{company.name}</TableCell>
