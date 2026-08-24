@@ -1,6 +1,5 @@
 import { Company } from "../models/company.model.js";
-import getDataUri from "../utils/datauri.js";
-import cloudinary from "../utils/cloudinary.js";
+import saveFileLocally from "../utils/localStorage.js";
 
 // Register a new company for the logged-in recruiter
 export const registerCompany = async (req, res) => {
@@ -31,7 +30,11 @@ export const registerCompany = async (req, res) => {
             success: true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Get all companies registered by the logged-in recruiter
@@ -50,7 +53,11 @@ export const getCompany = async (req, res) => {
             success:true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Get a single company by its id
@@ -69,7 +76,11 @@ export const getCompanyById = async (req, res) => {
             success: true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Update a company's info and logo image
@@ -78,10 +89,8 @@ export const updateCompany = async (req, res) => {
         const { name, description, website, location } = req.body;
 
         const file = req.file; // the uploaded logo file (handled by multer)
-        // convert the file to a data URI, then upload it to cloudinary to get a public URL
-        const fileUri = getDataUri(file);
-        const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-        const logo = cloudResponse.secure_url;
+        // save the logo file locally and get its URL
+        const logo = saveFileLocally(file, req);
 
         const updateData = { name, description, website, location, logo };
 
@@ -100,6 +109,10 @@ export const updateCompany = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }

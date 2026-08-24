@@ -15,15 +15,11 @@ services:
         sync: false
       - key: PORT
         value: 8000
+      - key: NODE_ENV
+        value: production
       - key: SECRET_KEY
         sync: false
       - key: CLIENT_URL
-        sync: false
-      - key: CLOUD_NAME
-        sync: false
-      - key: API_KEY
-        sync: false
-      - key: API_SECRET
         sync: false
       - key: EMAIL_HOST
         sync: false

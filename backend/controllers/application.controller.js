@@ -48,7 +48,11 @@ export const applyJob = async (req, res) => {
             success:true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 };
 // Get all jobs a logged-in student has applied to
@@ -75,7 +79,11 @@ export const getAppliedJobs = async (req,res) => {
             success:true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Recruiter/admin views how many people applied to a job
@@ -101,7 +109,11 @@ export const getApplicants = async (req,res) => {
             succees:true
         });
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Recruiter updates an applicant's status (e.g. accepted/rejected/pending)
@@ -158,7 +170,11 @@ export const updateStatus = async (req,res) => {
         });
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Recruiter schedules an interview (date/time + a meeting link they paste in from Google Meet/Zoom/etc)
@@ -214,6 +230,10 @@ export const scheduleInterview = async (req, res) => {
             application
         });
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }

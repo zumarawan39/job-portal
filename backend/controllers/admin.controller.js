@@ -23,7 +23,11 @@ export const getStats = async (req, res) => {
             }
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Get every user in the system (without passwords), newest first
@@ -35,7 +39,11 @@ export const getAllUsers = async (req, res) => {
             users
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Delete any user by id
@@ -53,7 +61,11 @@ export const deleteUser = async (req, res) => {
             success: true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Get every job posting in the system, newest first
@@ -65,7 +77,11 @@ export const getAllJobsAdmin = async (req, res) => {
             jobs
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Delete any job posting by id
@@ -83,7 +99,11 @@ export const deleteJobAdmin = async (req, res) => {
             success: true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Get every company in the system, newest first
@@ -95,7 +115,11 @@ export const getAllCompaniesAdmin = async (req, res) => {
             companies
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Delete any company by id
@@ -113,6 +137,10 @@ export const deleteCompanyAdmin = async (req, res) => {
             success: true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }

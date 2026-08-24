@@ -45,3 +45,9 @@ export const forgotPasswordSchema = z.object({
 export const resetPasswordSchema = z.object({
     password: z.string().min(6, "Password must be at least 6 characters.")
 });
+
+// Validates the "verify login OTP" request body (second step of 2FA login)
+export const verifyOtpSchema = z.object({
+    userId: z.string().min(1, "User id is required."),
+    otp: z.string().regex(/^\d{6}$/, "Enter the 6-digit code.")
+});

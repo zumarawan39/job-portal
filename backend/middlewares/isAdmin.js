@@ -12,7 +12,11 @@ const isAdmin = async (req, res, next) => {
         }
         next(); // move on to the actual route handler
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 export default isAdmin;

@@ -1,2 +1,6 @@
 .env
 node_modules
+
+# Uploaded profile photos/resumes/company logos - not committed, keep the folder itself
+uploads/*
+!uploads/.gitkeep

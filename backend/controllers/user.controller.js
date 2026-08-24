@@ -2,9 +2,12 @@ import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import getDataUri from "../utils/datauri.js";
-import cloudinary from "../utils/cloudinary.js";
+import saveFileLocally from "../utils/localStorage.js";
 import sendEmail from "../utils/sendEmail.js";
+
+// In prod, frontend and backend live on different domains (e.g. Vercel + Render),
+// so the login cookie needs sameSite:'none' + secure to be sent cross-site at all.
+const isProd = process.env.NODE_ENV === "production";
 
 // Sign up a new user (student or recruiter)
 export const register = async (req, res) => {
@@ -17,12 +20,10 @@ export const register = async (req, res) => {
                 success: false
             });
         };
-        // upload the profile photo to cloudinary and get its public URL, if one was provided
+        // save the profile photo locally and get its URL, if one was provided
         let profilePhoto = "";
         if (req.file) {
-            const fileUri = getDataUri(req.file);
-            const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-            profilePhoto = cloudResponse.secure_url;
+            profilePhoto = saveFileLocally(req.file, req);
         }
 
         // make sure no other account already uses this email
@@ -52,7 +53,11 @@ export const register = async (req, res) => {
             success: true
         });
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Log in an existing user and give them a login token (stored in a cookie)
@@ -134,13 +139,22 @@ export const login = async (req, res) => {
         // save the token in an httpOnly cookie so JavaScript on the frontend can't read it directly
         // (fixed a typo here: it must be "httpOnly", not "httpsOnly" - the old spelling was
         // silently ignored by the cookie library, so the security flag never actually applied)
-        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'strict' }).json({
+        return res.status(200).cookie("token", token, {
+            maxAge: 1 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: isProd,
+            sameSite: isProd ? 'none' : 'lax',
+        }).json({
             message: `Welcome back ${user.fullname}`,
             user,
             success: true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Log out by clearing the login token cookie
@@ -151,7 +165,11 @@ export const logout = async (req, res) => {
             success: true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Update the logged-in user's profile info (and optionally their resume file)
@@ -159,12 +177,11 @@ export const updateProfile = async (req, res) => {
     try {
         const { fullname, email, phoneNumber, bio, skills } = req.body;
 
-        // upload the new resume file to cloudinary and get its public URL, if one was provided
+        // save the new resume file locally and get its URL, if one was provided
         const file = req.file;
-        let cloudResponse;
+        let resumeUrl;
         if (file) {
-            const fileUri = getDataUri(file);
-            cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+            resumeUrl = saveFileLocally(file, req);
         }
 
         let skillsArray;
@@ -188,8 +205,8 @@ export const updateProfile = async (req, res) => {
         if(skills) user.profile.skills = skillsArray
 
         // save the new resume file info if one was uploaded
-        if(cloudResponse){
-            user.profile.resume = cloudResponse.secure_url // save the cloudinary url
+        if(resumeUrl){
+            user.profile.resume = resumeUrl
             user.profile.resumeOriginalName = file.originalname // Save the original file name
         }
 
@@ -212,7 +229,11 @@ export const updateProfile = async (req, res) => {
             success:true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Send a password reset link to the user's email (start of the forgot-password flow)
@@ -258,7 +279,11 @@ export const forgotPassword = async (req, res) => {
             success: true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Reset the password using the token emailed to the user
@@ -291,7 +316,11 @@ export const resetPassword = async (req, res) => {
             success: true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Verify the emailed OTP and finish logging the user in (second step of 2FA login)
@@ -342,13 +371,22 @@ export const verifyLoginOtp = async (req, res) => {
         }
 
         // save the token in an httpOnly cookie so JavaScript on the frontend can't read it directly
-        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'strict' }).json({
+        return res.status(200).cookie("token", token, {
+            maxAge: 1 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: isProd,
+            sameSite: isProd ? 'none' : 'lax',
+        }).json({
             message: `Welcome back ${user.fullname}`,
             user,
             success: true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Turn email OTP two-factor authentication on or off for the logged-in user
@@ -372,6 +410,10 @@ export const toggleTwoFactor = async (req, res) => {
             message: user.twoFactorEnabled ? "Two-factor authentication enabled." : "Two-factor authentication disabled."
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }

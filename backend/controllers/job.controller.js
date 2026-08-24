@@ -1,6 +1,11 @@
 import { Job } from "../models/job.model.js";
 import { User } from "../models/user.model.js";
 
+// Escapes regex special characters in user-supplied search text before it's used
+// in a Mongo $regex query, so a search term can't be interpreted as regex syntax
+// (which would otherwise allow query manipulation or a catastrophic-backtracking pattern).
+const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 // Recruiter/admin creates a new job posting
 export const postJob = async (req, res) => {
     try {
@@ -31,7 +36,11 @@ export const postJob = async (req, res) => {
             success: true
         });
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Student browses/searches all jobs, optionally filtered by keyword/location/industry/salary range
@@ -39,26 +48,29 @@ export const getAllJobs = async (req, res) => {
     try {
         const { keyword, location, industry, salaryMin, salaryMax } = req.query;
 
-        // only add a condition for each filter that was actually provided
+        // only add a condition for each filter that was actually provided, and only
+        // if it's a plain string - a crafted query string like ?keyword[$gt]= would
+        // otherwise arrive here as an object and get passed straight into $regex
         const conditions = [];
 
-        if (keyword) {
+        if (keyword && typeof keyword === "string") {
             // $regex with "i" option means case-insensitive partial text search
+            const safeKeyword = escapeRegex(keyword);
             conditions.push({
                 $or: [
-                    { title: { $regex: keyword, $options: "i" } },
-                    { description: { $regex: keyword, $options: "i" } },
+                    { title: { $regex: safeKeyword, $options: "i" } },
+                    { description: { $regex: safeKeyword, $options: "i" } },
                 ]
             });
         }
 
-        if (location) {
-            conditions.push({ location: { $regex: location, $options: "i" } });
+        if (location && typeof location === "string") {
+            conditions.push({ location: { $regex: escapeRegex(location), $options: "i" } });
         }
 
-        if (industry) {
+        if (industry && typeof industry === "string") {
             // maps to the frontend's "Industry" filter (e.g. "Frontend Developer") - matched against the job title
-            conditions.push({ title: { $regex: industry, $options: "i" } });
+            conditions.push({ title: { $regex: escapeRegex(industry), $options: "i" } });
         }
 
         if (salaryMin) {
@@ -87,7 +99,11 @@ export const getAllJobs = async (req, res) => {
             success: true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Get one job's full details by its id (including its applications)
@@ -105,7 +121,11 @@ export const getJobById = async (req, res) => {
         };
         return res.status(200).json({ job, success: true });
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Recruiter/admin sees all jobs they have created so far
@@ -127,7 +147,11 @@ export const getAdminJobs = async (req, res) => {
             success: true
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Suggest jobs for the logged-in student based on the skills on their profile
@@ -181,7 +205,11 @@ export const getRecommendedJobs = async (req, res) => {
             jobs
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Save (bookmark) a job for later, or remove it if it's already saved
@@ -204,7 +232,11 @@ export const toggleSaveJob = async (req, res) => {
             message: !alreadySaved ? "Job saved." : "Job removed from saved jobs."
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Get all jobs the logged-in user has saved for later
@@ -220,6 +252,10 @@ export const getSavedJobs = async (req, res) => {
             jobs: user.savedJobs
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }

@@ -9,7 +9,11 @@ export const getMyNotifications = async (req, res) => {
             notifications
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Mark a single notification as read
@@ -21,7 +25,11 @@ export const markAsRead = async (req, res) => {
             message: "Marked as read."
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
 // Mark all of the logged-in user's unread notifications as read
@@ -33,6 +41,10 @@ export const markAllAsRead = async (req, res) => {
             message: "All notifications marked as read."
         })
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong.",
+            success: false,
+        });
     }
 }
