@@ -1,8 +1,9 @@
 import { setSavedJobIds } from '@/redux/jobSlice'
 import { JOB_API_END_POINT } from '@/utils/constant'
-import axios from 'axios'
+import axios from '@/utils/axiosInstance'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { toast } from 'sonner'
 
 // Custom hook: fetches the ids of jobs the logged-in student has saved and stores them in Redux,
 // so any Job card anywhere in the app can know whether it's currently saved
@@ -19,7 +20,8 @@ const useGetSavedJobs = () => {
                     dispatch(setSavedJobIds(res.data.jobs.map(job => job._id)));
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
+                toast.error(error?.response?.data?.message || "Failed to load saved jobs.");
             }
         }
         fetchSavedJobs();

@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-react'
 import Navbar from './components/shared/Navbar'
 import ProtectedRoute from './components/admin/ProtectedRoute'
 import PlatformAdminRoute from './components/platformadmin/PlatformAdminRoute'
+import NotFound from './components/shared/NotFound'
 
 // Route-level pages are lazy-loaded so the initial bundle only ships the code needed
 // for whichever page the user actually lands on (smaller first load, code-split per route)
@@ -38,7 +39,7 @@ const PageLoader = () => (
 const withSuspense = (element) => <Suspense fallback={<PageLoader />}>{element}</Suspense>
 
 // List of all pages (routes) in the app and which component renders for each URL
-const appRouter = createBrowserRouter([
+const routeList = [
   {
     path: '/',
     element: withSuspense(<Home />)
@@ -113,8 +114,19 @@ const appRouter = createBrowserRouter([
     path:"/admin/jobs/:id/applicants",
     element:<ProtectedRoute>{withSuspense(<Applicants/>)}</ProtectedRoute>
   },
+  // Catches any URL that doesn't match a route above
+  {
+    path: "*",
+    element: <NotFound />
+  },
+]
 
-])
+// Give every route the same fallback for a route-render error (e.g. a component
+// throwing during render), so it shows NotFound instead of React Router's
+// default blank/unstyled error screen
+const appRouter = createBrowserRouter(
+  routeList.map((route) => ({ errorElement: <NotFound />, ...route }))
+)
 // Root component: renders whichever page matches the current URL
 function App() {
 

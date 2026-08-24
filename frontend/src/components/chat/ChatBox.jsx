@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import axios from 'axios'
+import axios from '@/utils/axiosInstance'
 import { MESSAGE_API_END_POINT } from '@/utils/constant'
 import socket from '@/utils/socket'
 import { useSelector } from 'react-redux'
@@ -25,7 +25,7 @@ const ChatBox = ({ applicationId }) => {
                     setMessages(res.data.messages);
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
         fetchHistory();

@@ -1,8 +1,9 @@
 import { setAllAdminJobs } from '@/redux/jobSlice'
 import { JOB_API_END_POINT } from '@/utils/constant'
-import axios from 'axios'
+import axios from '@/utils/axiosInstance'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+import { toast } from 'sonner'
 
 // Custom hook: fetches all jobs posted by the logged-in admin and saves them to Redux
 const useGetAllAdminJobs = () => {
@@ -17,7 +18,8 @@ const useGetAllAdminJobs = () => {
                     dispatch(setAllAdminJobs(res.data.jobs));
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
+                toast.error(error?.response?.data?.message || "Failed to load jobs.");
             }
         }
         fetchAllAdminJobs();

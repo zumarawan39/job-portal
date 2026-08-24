@@ -6,7 +6,7 @@ import { ArrowLeft, Loader2, Building2, Briefcase } from 'lucide-react'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Card, CardContent } from '../ui/card'
-import axios from 'axios'
+import axios from '@/utils/axiosInstance'
 import { COMPANY_API_END_POINT } from '@/utils/constant'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -74,8 +74,8 @@ const CompanySetup = () => {
                 navigate("/admin/companies");
             }
         } catch (error) {
-            console.log(error);
-            toast.error(error.response.data.message);
+            console.error(error);
+            toast.error(error?.response?.data?.message || "Something went wrong.");
         } finally {
             setLoading(false);
         }

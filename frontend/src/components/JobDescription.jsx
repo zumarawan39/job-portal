@@ -3,7 +3,7 @@ import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Card, CardContent, CardHeader } from './ui/card'
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import axios from '@/utils/axiosInstance';
 import { APPLICATION_API_END_POINT, JOB_API_END_POINT } from '@/utils/constant';
 import { setSingleJob } from '@/redux/jobSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -40,8 +40,8 @@ const JobDescription = () => {
 
             }
         } catch (error) {
-            console.log(error);
-            toast.error(error.response.data.message);
+            console.error(error);
+            toast.error(error?.response?.data?.message || "Something went wrong.");
         }
     }
 
@@ -57,7 +57,7 @@ const JobDescription = () => {
                     setIsApplied(res.data.job.applications.some(application=>application.applicant === user?._id)) // Ensure the state is in sync with fetched data
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
         fetchSingleJob();

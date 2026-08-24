@@ -6,7 +6,7 @@ import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import axios from '@/utils/axiosInstance'
 import { COMPANY_API_END_POINT } from '@/utils/constant'
 import { toast } from 'sonner'
 import { useDispatch } from 'react-redux'
@@ -43,7 +43,7 @@ const CompanyCreate = () => {
                 navigate(`/admin/companies/${companyId}`);
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
     return (

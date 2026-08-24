@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import Navbar from '../shared/Navbar'
 import DashboardLayout from '../shared/DashboardLayout'
 import ApplicantsTable from './ApplicantsTable'
-import axios from 'axios';
+import axios from '@/utils/axiosInstance';
 import { APPLICATION_API_END_POINT } from '@/utils/constant';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,7 +31,7 @@ const Applicants = () => {
                 // Save the applicants list in Redux so the table component can show it
                 dispatch(setAllApplicants(res.data.job));
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
         fetchAllApplicants();

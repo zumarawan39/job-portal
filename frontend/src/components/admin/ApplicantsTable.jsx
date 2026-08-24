@@ -10,7 +10,7 @@ import { MoreHorizontal } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import { APPLICATION_API_END_POINT } from '@/utils/constant';
-import axios from 'axios';
+import axios from '@/utils/axiosInstance';
 import ChatBox from '../chat/ChatBox';
 import InterviewDetails from '../InterviewDetails';
 
@@ -30,17 +30,16 @@ const ApplicantsTable = () => {
 
     // Sends a request to update one applicant's status (Accepted/Rejected)
     const statusHandler = async (status, id) => {
-        console.log('called');
         try {
             axios.defaults.withCredentials = true;
             // Tell the backend to change this application's status
             const res = await axios.post(`${APPLICATION_API_END_POINT}/status/${id}/update`, { status });
-            console.log(res);
             if (res.data.success) {
                 toast.success(res.data.message);
             }
         } catch (error) {
-            toast.error(error.response.data.message);
+            console.error(error);
+            toast.error(error?.response?.data?.message || "Something went wrong.");
         }
     }
 
@@ -64,7 +63,7 @@ const ApplicantsTable = () => {
                 setScheduleApplicationId(null);
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error(error.response?.data?.message || "Something went wrong");
         } finally {
             setScheduling(false);

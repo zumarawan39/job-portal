@@ -1,8 +1,9 @@
 import { setAllJobs } from '@/redux/jobSlice'
 import { JOB_API_END_POINT } from '@/utils/constant'
-import axios from 'axios'
+import axios from '@/utils/axiosInstance'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { toast } from 'sonner'
 
 // Custom hook: fetches jobs matching the current search query + filters and saves them to Redux
 const useGetAllJobs = () => {
@@ -29,7 +30,8 @@ const useGetAllJobs = () => {
                     dispatch(setAllJobs(res.data.jobs));
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
+                toast.error(error?.response?.data?.message || "Failed to load jobs.");
             }
         }
         fetchAllJobs();

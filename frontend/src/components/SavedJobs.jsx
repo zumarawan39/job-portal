@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from './shared/Navbar'
 import Job from './Job'
-import axios from 'axios'
+import axios from '@/utils/axiosInstance'
 import { JOB_API_END_POINT } from '@/utils/constant'
 import { Bookmark } from 'lucide-react'
 
@@ -17,7 +17,7 @@ const SavedJobs = () => {
                     setSavedJobs(res.data.jobs);
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
         fetchSavedJobs();

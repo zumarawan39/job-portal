@@ -18,7 +18,6 @@ const AdminJobsTable = () => {
 
     // Re-run the filter whenever the job list or the search text changes
     useEffect(()=>{
-        console.log('called');
         // Keep only jobs whose title or company name matches the search text
         const filteredJobs = allAdminJobs.filter((job)=>{
             if(!searchJobByText){

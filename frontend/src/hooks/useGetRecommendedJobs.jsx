@@ -1,8 +1,9 @@
 import { setRecommendedJobs } from '@/redux/jobSlice'
 import { JOB_API_END_POINT } from '@/utils/constant'
-import axios from 'axios'
+import axios from '@/utils/axiosInstance'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { toast } from 'sonner'
 
 // Custom hook: fetches skill-based recommended jobs for the logged-in student and saves them to Redux
 const useGetRecommendedJobs = () => {
@@ -18,7 +19,8 @@ const useGetRecommendedJobs = () => {
                     dispatch(setRecommendedJobs(res.data.jobs));
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
+                toast.error(error?.response?.data?.message || "Failed to load recommended jobs.");
             }
         }
         fetchRecommendedJobs();

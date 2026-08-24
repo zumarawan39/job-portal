@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import axios from '@/utils/axiosInstance'
 import { toast } from 'sonner'
 import { useLocation } from 'react-router-dom'
 import { LayoutDashboard, Users, Briefcase, Building2, FileText } from 'lucide-react'
@@ -67,7 +67,7 @@ const PlatformAdminDashboard = () => {
                     setStats(res.data.stats);
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
         const fetchUsers = async () => {
@@ -77,7 +77,7 @@ const PlatformAdminDashboard = () => {
                     setUsers(res.data.users);
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
         const fetchJobs = async () => {
@@ -87,7 +87,7 @@ const PlatformAdminDashboard = () => {
                     setJobs(res.data.jobs);
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
         const fetchCompanies = async () => {
@@ -97,7 +97,7 @@ const PlatformAdminDashboard = () => {
                     setCompanies(res.data.companies);
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
         fetchStats();
@@ -116,7 +116,7 @@ const PlatformAdminDashboard = () => {
                 toast.success(res.data.message);
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error(error.response?.data?.message || "Something went wrong");
         }
     }
@@ -131,7 +131,7 @@ const PlatformAdminDashboard = () => {
                 toast.success(res.data.message);
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error(error.response?.data?.message || "Something went wrong");
         }
     }
@@ -146,7 +146,7 @@ const PlatformAdminDashboard = () => {
                 toast.success(res.data.message);
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error(error.response?.data?.message || "Something went wrong");
         }
     }

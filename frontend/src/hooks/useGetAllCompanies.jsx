@@ -1,8 +1,9 @@
 import { setCompanies} from '@/redux/companySlice'
 import { COMPANY_API_END_POINT} from '@/utils/constant'
-import axios from 'axios'
+import axios from '@/utils/axiosInstance'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+import { toast } from 'sonner'
 
 // Custom hook: fetches all companies created by the admin and saves them to Redux
 const useGetAllCompanies = () => {
@@ -12,12 +13,12 @@ const useGetAllCompanies = () => {
         const fetchCompanies = async () => {
             try {
                 const res = await axios.get(`${COMPANY_API_END_POINT}/get`,{withCredentials:true});
-                console.log('called');
                 if(res.data.success){
                     dispatch(setCompanies(res.data.companies));
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
+                toast.error(error?.response?.data?.message || "Failed to load companies.");
             }
         }
         fetchCompanies();

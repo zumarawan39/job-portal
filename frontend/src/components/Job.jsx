@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Badge } from './ui/badge'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import axios from 'axios'
+import axios from '@/utils/axiosInstance'
 import { JOB_API_END_POINT } from '@/utils/constant'
 import { toggleSavedJobIdLocally } from '@/redux/jobSlice'
 import { toast } from 'sonner'
@@ -33,7 +33,7 @@ const Job = ({ job }) => {
                 toast.success(res.data.message);
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error(error.response?.data?.message || "Something went wrong");
         }
     }

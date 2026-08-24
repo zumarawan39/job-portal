@@ -15,8 +15,8 @@ const industryOptions = ["Developer", "Engineer", "Analyst", "Marketing"];
 // Salary labels shown to the user, mapped to an explicit numeric min/max range sent to the backend
 const salaryOptions = [
     { label: "0-40k", salaryMin: 0, salaryMax: 40000 },
-    { label: "42-1lakh", salaryMin: 42000, salaryMax: 100000 },
-    { label: "1lakh to 5lakh", salaryMin: 100000, salaryMax: 500000 },
+    { label: "42k-1lac", salaryMin: 42000, salaryMax: 100000 },
+    { label: "1lac to 5lac", salaryMin: 100000, salaryMax: 500000 },
 ];
 
 // Shows radio-button filters (Location, Industry, Salary) to narrow down job search results.

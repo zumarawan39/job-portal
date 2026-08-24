@@ -10,7 +10,7 @@ import AppliedJobTable from './AppliedJobTable'
 import UpdateProfileDialog from './UpdateProfileDialog'
 import { useDispatch, useSelector } from 'react-redux'
 import useGetAppliedJobs from '@/hooks/useGetAppliedJobs'
-import axios from 'axios'
+import axios from '@/utils/axiosInstance'
 import { USER_API_END_POINT } from '@/utils/constant'
 import { setUser } from '@/redux/authSlice'
 import { toast } from 'sonner'
@@ -37,7 +37,7 @@ const Profile = () => {
                 toast.success(res.data.message);
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error(error.response?.data?.message || "Something went wrong");
         }
     }

@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { LogOut, User2, Bell, Bookmark, LayoutDashboard } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import axios from 'axios'
+import axios from '@/utils/axiosInstance'
 import { USER_API_END_POINT, NOTIFICATION_API_END_POINT } from '@/utils/constant'
 import { setUser } from '@/redux/authSlice'
 import { markAllReadLocally, markOneReadLocally } from '@/redux/notificationSlice'
@@ -39,7 +39,7 @@ const Navbar = () => {
                 dispatch(markOneReadLocally(notification._id));
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 
@@ -51,7 +51,7 @@ const Navbar = () => {
                 dispatch(markAllReadLocally());
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 
@@ -73,8 +73,8 @@ const Navbar = () => {
                 toast.success(res.data.message);
             }
         } catch (error) {
-            console.log(error);
-            toast.error(error.response.data.message);
+            console.error(error);
+            toast.error(error?.response?.data?.message || "Something went wrong.");
         }
     }
     // Public job-seeker links (used for logged-out visitors and students)
