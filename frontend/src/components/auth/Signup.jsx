@@ -14,9 +14,6 @@ import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 // The roles a new user can sign up as, rendered as selectable pill buttons below.
-// Admin is gated behind an access code (see the "Admin Access Code" field below and
-// register() in the backend's user.controller.js) since that role can delete any
-// user/job/company - it must never be fully self-service.
 const ROLE_OPTIONS = [
     { value: 'student', label: 'Student' },
     { value: 'recruiter', label: 'Recruiter' },
@@ -32,7 +29,6 @@ const Signup = () => {
         phoneNumber: "",
         password: "",
         role: "",
-        adminCode: "",
         file: ""
     });
     // Read whether a signup request is in progress, and the currently logged-in user, from Redux
@@ -67,9 +63,6 @@ const Signup = () => {
         formData.append("phoneNumber", input.phoneNumber);
         formData.append("password", input.password);
         formData.append("role", input.role);
-        if (input.role === "admin") {
-            formData.append("adminCode", input.adminCode);
-        }
         if (input.file) {
             formData.append("file", input.file);
         }
@@ -184,25 +177,6 @@ const Signup = () => {
                                     ))}
                                 </div>
                             </div>
-                            {
-                                // Only shown for the Admin role - a plain student/recruiter signup
-                                // never needs this. Kept required in this component even though
-                                // the backend also enforces it, so a wrong code is caught with a
-                                // clear message instead of a generic 403.
-                                input.role === 'admin' && (
-                                    <div className='space-y-2'>
-                                        <Label>Admin Access Code</Label>
-                                        <Input
-                                            type="password"
-                                            value={input.adminCode}
-                                            name="adminCode"
-                                            onChange={changeEventHandler}
-                                            placeholder="Enter the admin access code"
-                                        />
-                                        <p className='text-xs text-muted-foreground'>Ask an existing admin for this code.</p>
-                                    </div>
-                                )
-                            }
                             <div className='space-y-2'>
                                 <Label>Profile Photo (optional)</Label>
                                 <Input

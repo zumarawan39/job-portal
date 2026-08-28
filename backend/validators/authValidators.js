@@ -15,9 +15,7 @@ export const registerSchema = z.object({
         { message: pkPhoneMessage }
     ),
     password: z.string().min(6, "Password must be at least 6 characters."),
-    role: z.enum(['student', 'recruiter', 'admin']),
-    // only required/checked when role is 'admin' - see register() in user.controller.js
-    adminCode: z.string().optional()
+    role: z.enum(['student', 'recruiter', 'admin'])
 });
 
 // Validates the login form's body fields

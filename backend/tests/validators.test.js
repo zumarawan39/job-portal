@@ -51,14 +51,13 @@ test("registerSchema fails on a non-Pakistani-mobile phone number", () => {
     assert.strictEqual(result.success, false);
 });
 
-test("registerSchema succeeds with role 'admin' (access-code check happens in the controller, not here)", () => {
+test("registerSchema succeeds with role 'admin'", () => {
     const result = registerSchema.safeParse({
         fullname: "Jane Doe",
         email: "jane@example.com",
         phoneNumber: "3001234567",
         password: "secret123",
-        role: "admin",
-        adminCode: "some-code"
+        role: "admin"
     });
     assert.strictEqual(result.success, true);
 });

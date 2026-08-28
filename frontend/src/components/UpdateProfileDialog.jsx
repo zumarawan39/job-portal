@@ -32,6 +32,16 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         setInput({ ...input, [e.target.name]: e.target.value });
     }
 
+    // Phone number is shown with a fixed "+92" prefix (see the input below), so only the
+    // digits after it are ever kept in state/submitted - matches the Signup form and what
+    // the backend expects (updateProfileSchema requires a bare 10-digit "3xxxxxxxxx").
+    const changePhoneHandler = (e) => {
+        let digits = e.target.value.replace(/\D/g, "");
+        if (digits.startsWith("0")) digits = digits.slice(1); // "03001234567" -> "3001234567"
+        digits = digits.slice(0, 10);
+        setInput({ ...input, phoneNumber: digits });
+    }
+
     const fileChangeHandler = (e) => {
         const file = e.target.files?.[0];
         setInput({ ...input, file })
@@ -76,8 +86,11 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
 
     return (
         <div>
-            <Dialog open={open}>
-                <DialogContent className="sm:max-w-[440px]" onInteractOutside={() => setOpen(false)}>
+            {/* onOpenChange wires up Radix's own close triggers (the built-in "X" button in
+                DialogContent, and the Escape key) - without it, open stays controlled by the
+                parent with no way for those to actually update it, so clicking the X did nothing. */}
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent className="sm:max-w-[440px]">
                     <DialogHeader>
                         <DialogTitle>Update Profile</DialogTitle>
                     </DialogHeader>
@@ -87,7 +100,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                                 <Label htmlFor="name">Name</Label>
                                 <Input
                                     id="name"
-                                    name="name"
+                                    name="fullname"
                                     type="text"
                                     value={input.fullname}
                                     onChange={changeEventHandler}
@@ -105,12 +118,19 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                             </div>
                             <div className='flex flex-col gap-1.5'>
                                 <Label htmlFor="number">Number</Label>
-                                <Input
-                                    id="number"
-                                    name="number"
-                                    value={input.phoneNumber}
-                                    onChange={changeEventHandler}
-                                />
+                                <div className='relative'>
+                                    <span className='pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm text-muted-foreground'>+92</span>
+                                    <Input
+                                        id="number"
+                                        name="phoneNumber"
+                                        type="tel"
+                                        inputMode="numeric"
+                                        value={input.phoneNumber}
+                                        onChange={changePhoneHandler}
+                                        placeholder="3001234567"
+                                        className="pl-11"
+                                    />
+                                </div>
                             </div>
                             <div className='flex flex-col gap-1.5'>
                                 <Label htmlFor="bio">Bio</Label>

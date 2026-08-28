@@ -12,7 +12,7 @@ const isProd = process.env.NODE_ENV === "production";
 // Sign up a new user (student, recruiter, or admin)
 export const register = async (req, res) => {
     try {
-        const { fullname, email, phoneNumber, password, role, adminCode } = req.body;
+        const { fullname, email, phoneNumber, password, role } = req.body;
 
         if (!fullname || !email || !phoneNumber || !password || !role) {
             return res.status(400).json({
@@ -20,20 +20,6 @@ export const register = async (req, res) => {
                 success: false
             });
         };
-
-        // Admin signup is gated behind a secret code (set as ADMIN_SIGNUP_CODE in the
-        // backend's .env) since the admin role can delete any user/job/company - it must
-        // never be self-service. Failing closed when the env var isn't set means a
-        // misconfigured deploy can't accidentally allow open admin signup.
-        if (role === "admin") {
-            const expectedCode = process.env.ADMIN_SIGNUP_CODE;
-            if (!expectedCode || adminCode !== expectedCode) {
-                return res.status(403).json({
-                    message: "Invalid admin access code.",
-                    success: false
-                });
-            }
-        }
 
         // save the profile photo locally and get its URL, if one was provided
         let profilePhoto = "";
