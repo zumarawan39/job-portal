@@ -148,7 +148,7 @@ const CompanySetup = () => {
                                         />
                                     </div>
                                     <div>
-                                        <Label>Logo</Label>
+                                        <Label>Logo (optional)</Label>
                                         <Input
                                             type="file"
                                             accept="image/*"

@@ -49,7 +49,10 @@ const jobSlice = createSlice({
         setFilters:(state,action) => {
             state.filters = {...state.filters, ...action.payload};
         },
-        // Resets all job filters back to empty
+        // Resets all job filters (and any active search keyword) back to empty. Also
+        // clearing searchedQuery here matters because it isn't scoped to the filter
+        // sidebar - a keyword typed into the hero search or a category pill sticks around
+        // otherwise, so "Clear Filters" wouldn't actually show every job.
         clearFilters:(state) => {
             state.filters = {
                 location:"",
@@ -57,6 +60,7 @@ const jobSlice = createSlice({
                 salaryMin:"",
                 salaryMax:"",
             };
+            state.searchedQuery = "";
         },
         // Stores the skill-based recommended jobs for the logged-in student
         setRecommendedJobs:(state,action) => {

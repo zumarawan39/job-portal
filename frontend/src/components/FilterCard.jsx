@@ -3,28 +3,35 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group'
 import { Label } from './ui/label'
 import { Button } from './ui/button'
 import { Card, CardContent, CardHeader } from './ui/card'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setFilters, clearFilters } from '@/redux/jobSlice'
+import { PK_CITIES, INDUSTRY_OPTIONS, SALARY_RANGES } from '@/utils/jobOptions'
 import { X } from 'lucide-react'
 
 // Location and Industry filter options (sent to the backend as-is; industry values are
-// matched against job titles via a substring regex on the backend, so these are broad
-// role-family words rather than exact titles)
-const locationOptions = ["Karachi", "Lahore", "Islamabad"];
-const industryOptions = ["Developer", "Engineer", "Analyst", "Marketing"];
+// matched against job title/description/requirements via a substring regex on the backend,
+// so these are broad role-family words rather than exact titles). Shared with the post-job
+// form via jobOptions.js so a recruiter can never post a job no filter option can reach.
+const locationOptions = PK_CITIES;
+const industryOptions = INDUSTRY_OPTIONS;
 // Salary labels shown to the user, mapped to an explicit numeric min/max range sent to the backend
-const salaryOptions = [
-    { label: "0-40k", salaryMin: 0, salaryMax: 40000 },
-    { label: "42k-1lac", salaryMin: 42000, salaryMax: 100000 },
-    { label: "1lac to 5lac", salaryMin: 100000, salaryMax: 500000 },
-];
+const salaryOptions = SALARY_RANGES;
 
 // Shows radio-button filters (Location, Industry, Salary) to narrow down job search results.
 // Each group keeps its own selection state so picking one group's option doesn't clear another's.
 const FilterCard = () => {
-    const [selectedLocation, setSelectedLocation] = useState('');
-    const [selectedIndustry, setSelectedIndustry] = useState('');
-    const [selectedSalary, setSelectedSalary] = useState('');
+    // Seed each group's visual selection from the current Redux filters (not just '') so a
+    // remount (e.g. navigating away and back, or a page reload) shows the selection that's
+    // actually being applied, instead of an empty-looking sidebar silently filtering results.
+    const { filters } = useSelector(store => store.job);
+    const [selectedLocation, setSelectedLocation] = useState(filters?.location || '');
+    const [selectedIndustry, setSelectedIndustry] = useState(filters?.industry || '');
+    const [selectedSalary, setSelectedSalary] = useState(() => {
+        const match = SALARY_RANGES.find(
+            (option) => option.salaryMin === filters?.salaryMin && option.salaryMax === filters?.salaryMax
+        );
+        return match?.label || '';
+    });
     const dispatch = useDispatch();
 
     const locationChangeHandler = (value) => {
@@ -68,7 +75,7 @@ const FilterCard = () => {
             <CardContent className='flex flex-col gap-5 p-4 pt-0'>
                 <div>
                     <h2 className='mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground'>Location</h2>
-                    <RadioGroup value={selectedLocation} onValueChange={locationChangeHandler} className='gap-2.5'>
+                    <RadioGroup value={selectedLocation} onValueChange={locationChangeHandler} className='max-h-56 gap-2.5 overflow-y-auto pr-1'>
                         {
                             locationOptions.map((item, idx) => {
                                 const itemId = `location-${idx}`

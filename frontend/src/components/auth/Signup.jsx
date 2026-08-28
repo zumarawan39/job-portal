@@ -13,10 +13,14 @@ import { setLoading } from '@/redux/authSlice'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-// The roles a new user can sign up as, rendered as selectable pill buttons below
+// The roles a new user can sign up as, rendered as selectable pill buttons below.
+// Admin is gated behind an access code (see the "Admin Access Code" field below and
+// register() in the backend's user.controller.js) since that role can delete any
+// user/job/company - it must never be fully self-service.
 const ROLE_OPTIONS = [
     { value: 'student', label: 'Student' },
     { value: 'recruiter', label: 'Recruiter' },
+    { value: 'admin', label: 'Admin' },
 ];
 
 // Signup form where new users create an account, choosing student or recruiter role
@@ -28,6 +32,7 @@ const Signup = () => {
         phoneNumber: "",
         password: "",
         role: "",
+        adminCode: "",
         file: ""
     });
     // Read whether a signup request is in progress, and the currently logged-in user, from Redux
@@ -39,6 +44,15 @@ const Signup = () => {
     // Update form state whenever a text input changes
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
+    }
+    // Phone number is shown with a fixed "+92" prefix (see the input below), so only the
+    // digits after it are ever kept in state/submitted - matches what the backend expects
+    // and what's already stored in the User model (phoneNumber: Number, no "+" or spaces).
+    const changePhoneHandler = (e) => {
+        let digits = e.target.value.replace(/\D/g, "");
+        if (digits.startsWith("0")) digits = digits.slice(1); // "03001234567" -> "3001234567"
+        digits = digits.slice(0, 10);
+        setInput({ ...input, phoneNumber: digits });
     }
     // Update form state with the selected profile picture file
     const changeFileHandler = (e) => {
@@ -53,6 +67,9 @@ const Signup = () => {
         formData.append("phoneNumber", input.phoneNumber);
         formData.append("password", input.password);
         formData.append("role", input.role);
+        if (input.role === "admin") {
+            formData.append("adminCode", input.adminCode);
+        }
         if (input.file) {
             formData.append("file", input.file);
         }
@@ -102,7 +119,7 @@ const Signup = () => {
                                     value={input.fullname}
                                     name="fullname"
                                     onChange={changeEventHandler}
-                                    placeholder="patel"
+                                    placeholder="Enter your full name"
                                 />
                             </div>
                             <div className='space-y-2'>
@@ -112,18 +129,23 @@ const Signup = () => {
                                     value={input.email}
                                     name="email"
                                     onChange={changeEventHandler}
-                                    placeholder="patel@gmail.com"
+                                    placeholder="you@example.com"
                                 />
                             </div>
                             <div className='space-y-2'>
                                 <Label>Phone Number</Label>
-                                <Input
-                                    type="text"
-                                    value={input.phoneNumber}
-                                    name="phoneNumber"
-                                    onChange={changeEventHandler}
-                                    placeholder="8080808080"
-                                />
+                                <div className='relative'>
+                                    <span className='pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm text-muted-foreground'>+92</span>
+                                    <Input
+                                        type="tel"
+                                        inputMode="numeric"
+                                        value={input.phoneNumber}
+                                        name="phoneNumber"
+                                        onChange={changePhoneHandler}
+                                        placeholder="3001234567"
+                                        className="pl-11"
+                                    />
+                                </div>
                             </div>
                             <div className='space-y-2'>
                                 <Label>Password</Label>
@@ -162,8 +184,27 @@ const Signup = () => {
                                     ))}
                                 </div>
                             </div>
+                            {
+                                // Only shown for the Admin role - a plain student/recruiter signup
+                                // never needs this. Kept required in this component even though
+                                // the backend also enforces it, so a wrong code is caught with a
+                                // clear message instead of a generic 403.
+                                input.role === 'admin' && (
+                                    <div className='space-y-2'>
+                                        <Label>Admin Access Code</Label>
+                                        <Input
+                                            type="password"
+                                            value={input.adminCode}
+                                            name="adminCode"
+                                            onChange={changeEventHandler}
+                                            placeholder="Enter the admin access code"
+                                        />
+                                        <p className='text-xs text-muted-foreground'>Ask an existing admin for this code.</p>
+                                    </div>
+                                )
+                            }
                             <div className='space-y-2'>
-                                <Label>Profile Photo</Label>
+                                <Label>Profile Photo (optional)</Label>
                                 <Input
                                     accept="image/*"
                                     type="file"

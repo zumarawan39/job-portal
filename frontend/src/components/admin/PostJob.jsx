@@ -12,8 +12,7 @@ import { JOB_API_END_POINT } from '@/utils/constant'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 import { Loader2, Building2, Briefcase } from 'lucide-react'
-
-const companyArray = [];
+import { PK_CITIES, JOB_TYPES, EXPERIENCE_LEVELS } from '@/utils/jobOptions'
 
 const nav = [
     { to: '/admin/companies', label: 'Companies', icon: Building2 },
@@ -30,7 +29,9 @@ const PostJob = () => {
         location: "",
         jobType: "",
         experience: "",
-        position: 0,
+        // "" (not 0) so an empty field is caught by the required-field check below instead
+        // of silently coercing to 0 and posting a job with zero openings.
+        position: "",
         companyId: ""
     });
     // Whether the post request is in progress, used to show a spinner on the button
@@ -50,13 +51,37 @@ const PostJob = () => {
         setInput({...input, companyId:selectedCompany._id});
     };
 
+    // Update form state when the job type / location dropdowns change
+    const jobTypeChangeHandler = (value) => setInput({ ...input, jobType: value });
+    const locationChangeHandler = (value) => setInput({ ...input, location: value });
+    // Experience Level's dropdown value is a string (Radix Select requires string values),
+    // so convert it back to the number the backend expects (years of experience).
+    const experienceChangeHandler = (value) => setInput({ ...input, experience: value });
+
     // Sends the new job details to the backend to create the job posting
     const submitHandler = async (e) => {
         e.preventDefault();
+
+        // Salary/experience/position used to be free-text fields, so a value like "0-40k" or
+        // "Mid Level" would reach the backend and fail with a raw "expected number, received
+        // NaN" error. They're now number inputs / dropdowns, but this check catches an empty
+        // field before it round-trips to the server at all.
+        if (input.salary === "" || input.experience === "" || input.position === "") {
+            toast.error("Please fill in Salary, Experience Level and No. of Positions.");
+            return;
+        }
+
+        const payload = {
+            ...input,
+            salary: Number(input.salary),
+            experience: Number(input.experience),
+            position: Number(input.position),
+        };
+
         try {
             setLoading(true);
             // Create a new job with all the form data
-            const res = await axios.post(`${JOB_API_END_POINT}/post`, input,{
+            const res = await axios.post(`${JOB_API_END_POINT}/post`, payload,{
                 headers:{
                     'Content-Type':'application/json'
                 },
@@ -114,10 +139,12 @@ const PostJob = () => {
                                         />
                                     </div>
                                     <div>
-                                        <Label>Salary</Label>
+                                        <Label>Monthly Salary (PKR)</Label>
                                         <Input
-                                            type="text"
+                                            type="number"
                                             name="salary"
+                                            min="0"
+                                            placeholder="85000"
                                             value={input.salary}
                                             onChange={changeEventHandler}
                                             className="my-1"
@@ -125,39 +152,62 @@ const PostJob = () => {
                                     </div>
                                     <div>
                                         <Label>Location</Label>
-                                        <Input
-                                            type="text"
-                                            name="location"
-                                            value={input.location}
-                                            onChange={changeEventHandler}
-                                            className="my-1"
-                                        />
+                                        <Select value={input.location} onValueChange={locationChangeHandler}>
+                                            <SelectTrigger className="my-1 w-full">
+                                                <SelectValue placeholder="Select a city" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    {
+                                                        PK_CITIES.map((city) => (
+                                                            <SelectItem key={city} value={city}>{city}</SelectItem>
+                                                        ))
+                                                    }
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                     <div>
                                         <Label>Job Type</Label>
-                                        <Input
-                                            type="text"
-                                            name="jobType"
-                                            value={input.jobType}
-                                            onChange={changeEventHandler}
-                                            className="my-1"
-                                        />
+                                        <Select value={input.jobType} onValueChange={jobTypeChangeHandler}>
+                                            <SelectTrigger className="my-1 w-full">
+                                                <SelectValue placeholder="Select a job type" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    {
+                                                        JOB_TYPES.map((type) => (
+                                                            <SelectItem key={type} value={type}>{type}</SelectItem>
+                                                        ))
+                                                    }
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                     <div>
                                         <Label>Experience Level</Label>
-                                        <Input
-                                            type="text"
-                                            name="experience"
-                                            value={input.experience}
-                                            onChange={changeEventHandler}
-                                            className="my-1"
-                                        />
+                                        <Select value={input.experience} onValueChange={experienceChangeHandler}>
+                                            <SelectTrigger className="my-1 w-full">
+                                                <SelectValue placeholder="Select an experience level" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    {
+                                                        EXPERIENCE_LEVELS.map((level) => (
+                                                            <SelectItem key={level.value} value={String(level.value)}>{level.label}</SelectItem>
+                                                        ))
+                                                    }
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                     <div>
-                                        <Label>No of Postion</Label>
+                                        <Label>No. of Positions</Label>
                                         <Input
                                             type="number"
                                             name="position"
+                                            min="1"
+                                            placeholder="1"
                                             value={input.position}
                                             onChange={changeEventHandler}
                                             className="my-1"

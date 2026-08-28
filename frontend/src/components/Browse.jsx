@@ -2,9 +2,10 @@ import React, { useEffect } from 'react'
 import Navbar from './shared/Navbar'
 import Job from './Job';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSearchedQuery } from '@/redux/jobSlice';
+import { clearFilters, setSearchedQuery } from '@/redux/jobSlice';
 import useGetAllJobs from '@/hooks/useGetAllJobs';
 import { SearchX } from 'lucide-react';
+import { Button } from './ui/button';
 
 // const randomJobs = [1, 2,45];
 
@@ -13,8 +14,13 @@ const Browse = () => {
     // Custom hook that fetches all jobs from the backend and stores them in Redux
     useGetAllJobs();
     // Read the fetched jobs list from the job slice of Redux state
-    const {allJobs} = useSelector(store=>store.job);
+    const {allJobs, filters} = useSelector(store=>store.job);
     const dispatch = useDispatch();
+    // Whether a job filter (set on the /jobs page) is still narrowing results here too -
+    // Browse doesn't render FilterCard, but useGetAllJobs still applies whatever is in
+    // Redux, so a leftover filter can make a plain keyword search look like it found nothing.
+    const hasSalaryFilter = (value) => value !== "" && value !== undefined && value !== null;
+    const hasActiveFilters = Boolean(filters?.location || filters?.industry || hasSalaryFilter(filters?.salaryMin) || hasSalaryFilter(filters?.salaryMax));
     // Runs once on mount; the returned cleanup function clears the search query when leaving this page
     useEffect(()=>{
         return ()=>{
@@ -35,7 +41,18 @@ const Browse = () => {
                                     <SearchX className='h-6 w-6 text-muted-foreground' />
                                 </div>
                                 <h2 className='font-display text-lg font-semibold'>No results found</h2>
-                                <p className='max-w-xs text-sm text-muted-foreground'>Try a different search term to find what you're looking for.</p>
+                                <p className='max-w-xs text-sm text-muted-foreground'>
+                                    {hasActiveFilters
+                                        ? "A job filter is still active and may be narrowing these results."
+                                        : "Try a different search term to find what you're looking for."}
+                                </p>
+                                {
+                                    hasActiveFilters && (
+                                        <Button variant="outline" size="sm" className='mt-2' onClick={() => dispatch(clearFilters())}>
+                                            Clear filters
+                                        </Button>
+                                    )
+                                }
                             </div>
                         </div>
                     ) : (
