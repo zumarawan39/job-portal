@@ -1,5 +1,8 @@
 // One-off script to promote an existing signed-up user to admin.
-// There is no admin signup form on purpose (keeps signup simple: only student/recruiter).
+// Admin signup also exists on the signup form now, gated behind the ADMIN_SIGNUP_CODE env
+// var (see register() in controllers/user.controller.js) since the admin role can delete
+// any user/job/company. This script remains as the no-code fallback for promoting an
+// existing student/recruiter account without knowing that secret.
 // Run manually with: node scripts/makeAdmin.js someone@example.com
 import mongoose from "mongoose";
 import dotenv from "dotenv";

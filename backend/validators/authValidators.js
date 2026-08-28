@@ -1,16 +1,23 @@
 import { z } from "zod";
 
+// Matches a Pakistani mobile number with the leading 0/country code stripped, e.g. "3001234567"
+// (the frontend only ever submits the digits after a fixed "+92" prefix shown in the UI).
+const pkPhoneRegex = /^3\d{9}$/;
+const pkPhoneMessage = "Enter a valid Pakistani mobile number (e.g. 3001234567).";
+
 // Validates the register form's body fields
 export const registerSchema = z.object({
     fullname: z.string().min(1, "Full name is required."),
     email: z.string().email("Enter a valid email address."),
-    // lenient - the frontend sends this as a plain form field, accept a string or number of digits
+    // lenient on the type (string or number) since this is a plain form field, but strict on shape
     phoneNumber: z.union([z.string(), z.number()]).refine(
-        (val) => /^\d{7,15}$/.test(val.toString()),
-        { message: "Enter a valid phone number." }
+        (val) => pkPhoneRegex.test(val.toString()),
+        { message: pkPhoneMessage }
     ),
     password: z.string().min(6, "Password must be at least 6 characters."),
-    role: z.enum(['student', 'recruiter'])
+    role: z.enum(['student', 'recruiter', 'admin']),
+    // only required/checked when role is 'admin' - see register() in user.controller.js
+    adminCode: z.string().optional()
 });
 
 // Validates the login form's body fields
@@ -25,7 +32,12 @@ export const loginSchema = z.object({
 export const updateProfileSchema = z.object({
     fullname: z.string().optional(),
     email: z.string().email("Enter a valid email address.").optional(),
-    phoneNumber: z.union([z.string(), z.number()]).optional(),
+    // same shape check as registerSchema - without this, an arbitrary string reaches
+    // phoneNumber: Number in the User model and throws an uncaught Mongoose CastError
+    phoneNumber: z.union([z.string(), z.number()]).refine(
+        (val) => val === undefined || pkPhoneRegex.test(val.toString()),
+        { message: pkPhoneMessage }
+    ).optional(),
     bio: z.string().optional(),
     // sent as a comma-separated string by the frontend - the controller itself splits it
     skills: z.string().optional()

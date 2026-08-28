@@ -88,11 +88,17 @@ export const updateCompany = async (req, res) => {
     try {
         const { name, description, website, location } = req.body;
 
-        const file = req.file; // the uploaded logo file (handled by multer)
-        // save the logo file locally and get its URL
-        const logo = saveFileLocally(file, req);
-
-        const updateData = { name, description, website, location, logo };
+        // Only include fields that were actually provided - the logo file is optional
+        // (a recruiter can update just the description without re-uploading a logo), and
+        // building this conditionally also stops a blank field from overwriting a stored
+        // value with "". saveFileLocally is only called when a file was actually uploaded,
+        // since it dereferences file.originalname and would throw otherwise.
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (description) updateData.description = description;
+        if (website) updateData.website = website;
+        if (location) updateData.location = location;
+        if (req.file) updateData.logo = saveFileLocally(req.file, req);
 
         // { new: true } makes it return the updated document instead of the old one
         const company = await Company.findByIdAndUpdate(req.params.id, updateData, { new: true });

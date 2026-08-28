@@ -12,9 +12,12 @@ export const postJob = async (req, res) => {
         const { title, description, requirements, salary, location, jobType, experience, position, companyId } = req.body;
         const userId = req.id;
 
-        if (!title || !description || !requirements || !salary || !location || !jobType || !experience || !position || !companyId) {
+        // salary/experience/position are only checked for presence here, not truthiness -
+        // validate(postJobSchema) already guarantees they're numbers, and a truthy check would
+        // wrongly reject legitimate 0 values (e.g. an "Entry Level" job with 0 years experience).
+        if (!title || !description || !requirements || salary === undefined || !location || !jobType || experience === undefined || !position || !companyId) {
             return res.status(400).json({
-                message: "Somethin is missing.",
+                message: "Something is missing.",
                 success: false
             })
         };
@@ -22,7 +25,7 @@ export const postJob = async (req, res) => {
             title,
             description,
             requirements: requirements.split(","), // turn comma-separated text into an array
-            salary: Number(salary), // make sure salary is stored as a number
+            salary, // already coerced to a number by validate(postJobSchema)
             location,
             jobType,
             experienceLevel: experience,
@@ -69,8 +72,18 @@ export const getAllJobs = async (req, res) => {
         }
 
         if (industry && typeof industry === "string") {
-            // maps to the frontend's "Industry" filter (e.g. "Frontend Developer") - matched against the job title
-            conditions.push({ title: { $regex: escapeRegex(industry), $options: "i" } });
+            // maps to the frontend's "Industry" filter (e.g. "Finance", "Support") - there's no
+            // dedicated industry field on the Job model, so match against title, description or
+            // requirements. Title-only matching missed jobs like "Accountant" for an industry of
+            // "Finance", since that word never appears in the title itself.
+            const safeIndustry = escapeRegex(industry);
+            conditions.push({
+                $or: [
+                    { title: { $regex: safeIndustry, $options: "i" } },
+                    { description: { $regex: safeIndustry, $options: "i" } },
+                    { requirements: { $regex: safeIndustry, $options: "i" } },
+                ]
+            });
         }
 
         if (salaryMin) {

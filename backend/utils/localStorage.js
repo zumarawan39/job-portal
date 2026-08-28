@@ -16,6 +16,10 @@ if (!fs.existsSync(uploadsDir)) {
 // returns the absolute URL to fetch it back, built from the current request's
 // own host so it works the same in dev and once deployed.
 const saveFileLocally = (file, req) => {
+    // Defence in depth: every upload field in this app is optional, so a caller might
+    // pass through an undefined req.file. Without this guard, file.originalname below
+    // throws a TypeError that a caller could easily forget to check for beforehand.
+    if (!file) return null;
     const ext = path.extname(file.originalname);
     const filename = `${crypto.randomUUID()}${ext}`;
     fs.writeFileSync(path.join(uploadsDir, filename), file.buffer);

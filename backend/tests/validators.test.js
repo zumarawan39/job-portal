@@ -12,7 +12,7 @@ test("registerSchema succeeds on valid input", () => {
     const result = registerSchema.safeParse({
         fullname: "Jane Doe",
         email: "jane@example.com",
-        phoneNumber: "1234567890",
+        phoneNumber: "3001234567",
         password: "secret123",
         role: "student"
     });
@@ -22,7 +22,7 @@ test("registerSchema succeeds on valid input", () => {
 test("registerSchema fails on missing fullname", () => {
     const result = registerSchema.safeParse({
         email: "jane@example.com",
-        phoneNumber: "1234567890",
+        phoneNumber: "3001234567",
         password: "secret123",
         role: "student"
     });
@@ -33,11 +33,34 @@ test("registerSchema fails on invalid email", () => {
     const result = registerSchema.safeParse({
         fullname: "Jane Doe",
         email: "not-an-email",
+        phoneNumber: "3001234567",
+        password: "secret123",
+        role: "student"
+    });
+    assert.strictEqual(result.success, false);
+});
+
+test("registerSchema fails on a non-Pakistani-mobile phone number", () => {
+    const result = registerSchema.safeParse({
+        fullname: "Jane Doe",
+        email: "jane@example.com",
         phoneNumber: "1234567890",
         password: "secret123",
         role: "student"
     });
     assert.strictEqual(result.success, false);
+});
+
+test("registerSchema succeeds with role 'admin' (access-code check happens in the controller, not here)", () => {
+    const result = registerSchema.safeParse({
+        fullname: "Jane Doe",
+        email: "jane@example.com",
+        phoneNumber: "3001234567",
+        password: "secret123",
+        role: "admin",
+        adminCode: "some-code"
+    });
+    assert.strictEqual(result.success, true);
 });
 
 test("loginSchema fails on invalid role enum", () => {
@@ -118,6 +141,52 @@ test("postJobSchema fails on missing title", () => {
         companyId: "abc123"
     });
     assert.strictEqual(result.success, false);
+});
+
+test("postJobSchema fails with a friendly message on a non-numeric salary (regression: PostJob form used to send shorthand like '0-40k')", () => {
+    const result = postJobSchema.safeParse({
+        title: "Backend Developer",
+        description: "Build stuff",
+        requirements: "Node.js",
+        salary: "0-40k",
+        location: "Remote",
+        jobType: "Full-time",
+        experience: "2",
+        position: "1",
+        companyId: "abc123"
+    });
+    assert.strictEqual(result.success, false);
+    assert.strictEqual(result.error.issues[0].message, "Salary must be a number.");
+});
+
+test("postJobSchema fails on a zero position count (at least one opening is required)", () => {
+    const result = postJobSchema.safeParse({
+        title: "Backend Developer",
+        description: "Build stuff",
+        requirements: "Node.js",
+        salary: "50000",
+        location: "Remote",
+        jobType: "Full-time",
+        experience: "2",
+        position: "0",
+        companyId: "abc123"
+    });
+    assert.strictEqual(result.success, false);
+});
+
+test("postJobSchema succeeds with 0 years of experience (Entry Level)", () => {
+    const result = postJobSchema.safeParse({
+        title: "Backend Developer",
+        description: "Build stuff",
+        requirements: "Node.js",
+        salary: "50000",
+        location: "Remote",
+        jobType: "Full-time",
+        experience: "0",
+        position: "1",
+        companyId: "abc123"
+    });
+    assert.strictEqual(result.success, true);
 });
 
 test("postJobSchema fails on negative salary", () => {
