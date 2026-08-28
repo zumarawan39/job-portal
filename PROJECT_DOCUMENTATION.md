@@ -156,7 +156,9 @@ npm run dev
 Open the URL Vite prints (usually `http://localhost:5173`). CORS on the backend already allows both `http://localhost:5173` and `:5174` (Vite's two most common dev ports) — if Vite picks a different port, set `CLIENT_URL` in `backend/.env` to whatever URL it printed.
 
 ### Step 3 — Create an admin (optional)
-There's no admin signup form on purpose — it keeps normal signup simple (student/recruiter only). To make an existing account an admin, sign up normally first, then run:
+The signup form has an "Admin" option alongside Student/Recruiter, but it's gated behind an `ADMIN_SIGNUP_CODE` secret (set it in `backend/.env`) since the admin role can delete any user/job/company — it must never be fully self-service. Sign up with role Admin and enter that code to create one directly.
+
+If you'd rather not set that env var, you can instead promote an existing student/recruiter account from the command line:
 ```
 cd backend
 node scripts/makeAdmin.js the-email-you-signed-up-with@example.com
@@ -179,7 +181,7 @@ Log out and back in, and you'll see an "Admin Dashboard" link in the navbar inst
 **Everyone**
 - Sign up / log in / log out (JWT stored in an httpOnly cookie, 1-day expiry)
 - Optional two-factor login: a 6-digit code emailed at login time (opt-in, toggle in your profile)
-- Three account roles: `student` and `recruiter` (chosen at signup) or `admin` (granted manually, see Section 4)
+- Three account roles: `student`, `recruiter`, or `admin` — all chosen at signup, though `admin` also requires an `ADMIN_SIGNUP_CODE` secret (see Section 4); an existing account can also be promoted manually
 - "Forgot password" — request a reset link by email, then set a new password from a link valid for 15 minutes
 - Toast notifications for success/error messages (via `sonner`)
 - A notification bell in the navbar (in-app notifications, e.g. application status/interview updates)
@@ -349,7 +351,7 @@ Five more things were built:
 
 - Job recommendations use a simple keyword-overlap score — not machine learning. Accurate to call it "rule-based," not "AI," if asked directly.
 - Video calls only work embedded in-app for Daily.co rooms (auto-created when configured); pasted Zoom/Meet/Teams links still just open in a new tab, since those platforms block iframe embedding for security reasons — that's a limitation of those services, not something fixable from this app's side.
-- Admin accounts can only be created by running `backend/scripts/makeAdmin.js` on an existing account — no signup flow or in-app way to promote someone, by design.
+- Admin accounts can be created directly from the signup form (role "Admin"), gated behind the `ADMIN_SIGNUP_CODE` env var so it can't be self-service without that secret; `backend/scripts/makeAdmin.js` remains as a no-code fallback for promoting an existing account.
 - Most backend `catch` blocks just `console.log(error)` without sending an error response back to the frontend — predates this work, wasn't in scope to rewrite everywhere.
 - Email sending (password reset, 2FA codes, notifications) and Daily.co room creation are both best-effort: if not configured, or the request to the external service fails, the app logs a warning and falls back gracefully rather than failing the request.
 - The `mutler.js` filename (in `backend/middlewares/`) is a typo of "multer" carried over from the original code; left as-is to avoid unnecessary churn.
