@@ -22,7 +22,10 @@ const CompanySetup = lazy(() => import('./components/admin/CompanySetup'))
 const AdminJobs = lazy(() => import('./components/admin/AdminJobs'))
 const PostJob = lazy(() => import('./components/admin/PostJob'))
 const Applicants = lazy(() => import('./components/admin/Applicants'))
-const PlatformAdminDashboard = lazy(() => import('./components/platformadmin/PlatformAdminDashboard'))
+const PlatformAdminOverview = lazy(() => import('./components/platformadmin/PlatformAdminOverview'))
+const PlatformAdminUsers = lazy(() => import('./components/platformadmin/PlatformAdminUsers'))
+const PlatformAdminJobs = lazy(() => import('./components/platformadmin/PlatformAdminJobs'))
+const PlatformAdminCompanies = lazy(() => import('./components/platformadmin/PlatformAdminCompanies'))
 const ForgotPassword = lazy(() => import('./components/auth/ForgotPassword'))
 const ResetPassword = lazy(() => import('./components/auth/ResetPassword'))
 const VerifyOtp = lazy(() => import('./components/auth/VerifyOtp'))
@@ -84,10 +87,23 @@ const routeList = [
     path: "/verify-otp",
     element: withSuspense(<VerifyOtp />)
   },
-  // Real platform-admin dashboard (not to be confused with the recruiter "admin" routes below)
+  // Real platform-admin dashboard (not to be confused with the recruiter "admin" routes below).
+  // Each sidebar section is its own route/page rather than an anchor on one long page.
   {
     path: "/platform-admin",
-    element: <PlatformAdminRoute>{withSuspense(<PlatformAdminDashboard />)}</PlatformAdminRoute>
+    element: <PlatformAdminRoute>{withSuspense(<PlatformAdminOverview />)}</PlatformAdminRoute>
+  },
+  {
+    path: "/platform-admin/users",
+    element: <PlatformAdminRoute>{withSuspense(<PlatformAdminUsers />)}</PlatformAdminRoute>
+  },
+  {
+    path: "/platform-admin/jobs",
+    element: <PlatformAdminRoute>{withSuspense(<PlatformAdminJobs />)}</PlatformAdminRoute>
+  },
+  {
+    path: "/platform-admin/companies",
+    element: <PlatformAdminRoute>{withSuspense(<PlatformAdminCompanies />)}</PlatformAdminRoute>
   },
   // Admin-only routes start here (wrapped in ProtectedRoute so only admins can view them)
   {

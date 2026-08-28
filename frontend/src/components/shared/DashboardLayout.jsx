@@ -11,11 +11,17 @@ const DashboardLayout = ({ title, description, nav, actions, children }) => {
     return (
         <div className='min-h-[calc(100vh-4rem)] bg-muted/30'>
             <div className='max-w-7xl mx-auto px-4 py-8 md:flex md:items-start md:gap-8'>
-                <aside className='mb-6 md:mb-0 md:w-56 md:flex-shrink-0'>
+                <aside className='mb-6 md:sticky md:top-24 md:mb-0 md:w-56 md:flex-shrink-0 md:self-start'>
                     <nav className='flex gap-2 overflow-x-auto pb-2 md:flex-col md:overflow-visible md:pb-0'>
                         {
                             nav.map((item) => {
-                                const active = location.pathname === item.to || location.pathname.startsWith(`${item.to}/`);
+                                // `end: true` (set on a nav item whose `to` is a prefix of a sibling's,
+                                // e.g. platform-admin's Overview at "/platform-admin" vs. its
+                                // "/platform-admin/users") requires an exact match instead of a prefix
+                                // match, so the parent link doesn't stay lit up on every sub-page too.
+                                const active = item.end
+                                    ? location.pathname === item.to
+                                    : location.pathname === item.to || location.pathname.startsWith(`${item.to}/`);
                                 const Icon = item.icon;
                                 return (
                                     <Link
