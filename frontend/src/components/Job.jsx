@@ -17,14 +17,14 @@ const Job = ({ job }) => {
     // Used to go to this job's details page when "Details" is clicked
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    // Read the logged-in user (to only show the save button to students) and the saved job ids
+    // Read the logged-in user (to only show the save button to job seekers) and the saved job ids
     const { user } = useSelector(store => store.auth);
     const { savedJobIds = [] } = useSelector(store => store.job);
     const isSaved = savedJobIds.includes(job?._id);
-    const isStudent = user?.role === 'student';
-    const skillMatch = isStudent ? computeSkillMatch(user?.profile?.skills, job) : null;
+    const isJobSeeker = user?.role === 'jobseeker';
+    const skillMatch = isJobSeeker ? computeSkillMatch(user?.profile?.skills, job) : null;
 
-    // Toggles whether this job is saved for later by the logged-in student
+    // Toggles whether this job is saved for later by the logged-in job seeker
     const saveJobHandler = async () => {
         try {
             const res = await axios.post(`${JOB_API_END_POINT}/save/${job?._id}`, {}, { withCredentials: true });
@@ -51,8 +51,8 @@ const Job = ({ job }) => {
             <div className='flex items-center justify-between'>
                 <p className='text-xs font-medium text-muted-foreground'>{daysAgoFunction(job?.createdAt) === 0 ? "Today" : `${daysAgoFunction(job?.createdAt)} days ago`}</p>
                 {
-                    // Only logged-in students can save jobs for later
-                    isStudent && (
+                    // Only logged-in job seekers can save jobs for later
+                    isJobSeeker && (
                         <Button
                             onClick={saveJobHandler}
                             variant="outline"
@@ -100,7 +100,7 @@ const Job = ({ job }) => {
             <div className='flex items-center gap-3 mt-4'>
                 <Button onClick={() => navigate(`/description/${job?._id}`)} variant="outline" className="flex-1">Details</Button>
                 {
-                    isStudent && (
+                    isJobSeeker && (
                         <Button onClick={saveJobHandler} className="flex-1">{isSaved ? "Saved" : "Save For Later"}</Button>
                     )
                 }

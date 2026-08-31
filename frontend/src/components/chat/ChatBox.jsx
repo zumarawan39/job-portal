@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 
-// Real-time chat between a recruiter and a student for one specific job application.
+// Real-time chat between a recruiter and a job seeker for one specific job application.
 // Joins the application's socket room, loads history over REST, then listens for new messages.
 const ChatBox = ({ applicationId }) => {
     const { user } = useSelector(store => store.auth);

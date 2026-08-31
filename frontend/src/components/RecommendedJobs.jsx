@@ -4,14 +4,14 @@ import { useSelector } from 'react-redux';
 import useGetRecommendedJobs from '@/hooks/useGetRecommendedJobs';
 
 // Shows a "Recommended For You" section on the home page with skill-based job matches
-// for the logged-in student. Renders nothing for recruiters, admins, or logged-out users.
+// for the logged-in job seeker. Renders nothing for recruiters, admins, or logged-out users.
 const RecommendedJobs = () => {
-    // Fetches the recommended jobs for the logged-in student and stores them in Redux
+    // Fetches the recommended jobs for the logged-in job seeker and stores them in Redux
     useGetRecommendedJobs();
     const { recommendedJobs } = useSelector(store => store.job);
     const { user } = useSelector(store => store.auth);
 
-    if (!(user && user.role === 'student') || recommendedJobs.length === 0) {
+    if (!(user && user.role === 'jobseeker') || recommendedJobs.length === 0) {
         return null;
     }
 

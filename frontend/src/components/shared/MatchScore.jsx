@@ -1,6 +1,6 @@
 import React from 'react'
 
-// Compares the logged-in student's skills against a job's requirements, mirroring the
+// Compares the logged-in job seeker's skills against a job's requirements, mirroring the
 // same case-insensitive text-overlap approach the backend's recommendation scoring uses
 // (see backend/controllers/job.controller.js getRecommendedJobs) so the number shown here
 // is honest, not a decorative made-up figure.
@@ -15,7 +15,7 @@ export const computeSkillMatch = (userSkills, job) => {
 }
 
 // Small meter that visualizes how many of a job's listed requirements match the logged-in
-// student's own skills - this is the app's real skill-based recommendation logic made visible
+// job seeker's own skills - this is the app's real skill-based recommendation logic made visible
 // on every job card, not just the "Recommended For You" section.
 const MatchScore = ({ matched, total, className = '' }) => {
     if (!total) return null;

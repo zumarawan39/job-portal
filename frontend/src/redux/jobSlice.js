@@ -62,7 +62,7 @@ const jobSlice = createSlice({
             };
             state.searchedQuery = "";
         },
-        // Stores the skill-based recommended jobs for the logged-in student
+        // Stores the skill-based recommended jobs for the logged-in job seeker
         setRecommendedJobs:(state,action) => {
             state.recommendedJobs = action.payload;
         },

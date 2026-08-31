@@ -15,12 +15,12 @@ import { cn } from '@/lib/utils'
 
 // The roles a new user can sign up as, rendered as selectable pill buttons below.
 const ROLE_OPTIONS = [
-    { value: 'student', label: 'Student' },
+    { value: 'jobseeker', label: 'Job Seeker' },
     { value: 'recruiter', label: 'Recruiter' },
     { value: 'admin', label: 'Admin' },
 ];
 
-// Signup form where new users create an account, choosing student or recruiter role
+// Signup form where new users create an account, choosing job seeker or recruiter role
 const Signup = () => {
 
     const [input, setInput] = useState({

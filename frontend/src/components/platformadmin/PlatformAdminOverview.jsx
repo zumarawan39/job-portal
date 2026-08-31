@@ -13,7 +13,7 @@ import { platformAdminNav } from './platformAdminNav'
 // of being sections stacked on one long scrolling page.
 const PlatformAdminOverview = () => {
     const [stats, setStats] = useState({
-        totalStudents: 0,
+        totalJobSeekers: 0,
         totalRecruiters: 0,
         totalJobs: 0,
         totalCompanies: 0,
@@ -35,7 +35,7 @@ const PlatformAdminOverview = () => {
     }, []);
 
     const statCards = [
-        { label: "Students", value: stats.totalStudents, icon: Users, chipClass: "bg-primary/10 text-primary" },
+        { label: "Job Seekers", value: stats.totalJobSeekers, icon: Users, chipClass: "bg-primary/10 text-primary" },
         { label: "Recruiters", value: stats.totalRecruiters, icon: Users, chipClass: "bg-success/10 text-success" },
         { label: "Jobs", value: stats.totalJobs, icon: Briefcase, chipClass: "bg-warning/10 text-warning" },
         { label: "Companies", value: stats.totalCompanies, icon: Building2, chipClass: "bg-muted text-brand-orange" },

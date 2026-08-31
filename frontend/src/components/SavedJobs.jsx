@@ -5,7 +5,7 @@ import axios from '@/utils/axiosInstance'
 import { JOB_API_END_POINT } from '@/utils/constant'
 import { Bookmark } from 'lucide-react'
 
-// Simple one-off page showing all jobs the logged-in student has saved for later
+// Simple one-off page showing all jobs the logged-in job seeker has saved for later
 const SavedJobs = () => {
     const [savedJobs, setSavedJobs] = useState([]);
 

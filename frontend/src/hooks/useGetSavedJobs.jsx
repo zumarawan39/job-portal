@@ -5,14 +5,14 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'sonner'
 
-// Custom hook: fetches the ids of jobs the logged-in student has saved and stores them in Redux,
+// Custom hook: fetches the ids of jobs the logged-in job seeker has saved and stores them in Redux,
 // so any Job card anywhere in the app can know whether it's currently saved
 const useGetSavedJobs = () => {
     const dispatch = useDispatch();
     const { user } = useSelector(store => store.auth);
     useEffect(() => {
-        // Only students save jobs - skip for recruiters/admins/logged-out visitors
-        if (!user || user.role !== 'student') return;
+        // Only job seekers save jobs - skip for recruiters/admins/logged-out visitors
+        if (!user || user.role !== 'jobseeker') return;
         const fetchSavedJobs = async () => {
             try {
                 const res = await axios.get(`${JOB_API_END_POINT}/saved`, { withCredentials: true });

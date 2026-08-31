@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils'
 const Navbar = () => {
     // Fetches the logged-in user's notifications and keeps them in Redux
     useGetNotifications();
-    // Fetches the logged-in student's saved job ids and keeps them in Redux
+    // Fetches the logged-in job seeker's saved job ids and keeps them in Redux
     useGetSavedJobs();
     // Read the logged-in user from Redux (null if nobody is logged in), used to decide what links/buttons to show
     const { user } = useSelector(store => store.auth);
@@ -77,7 +77,7 @@ const Navbar = () => {
             toast.error(error?.response?.data?.message || "Something went wrong.");
         }
     }
-    // Public job-seeker links (used for logged-out visitors and students)
+    // Public job-seeker links (used for logged-out visitors and job seekers)
     const publicLinks = [
         { to: '/', label: 'Home' },
         { to: '/jobs', label: 'Jobs' },
@@ -97,7 +97,7 @@ const Navbar = () => {
                             // Show the right nav links depending on the logged-in user's role:
                             // real platform admins and recruiters get a single Dashboard link
                             // (their sidebar handles deeper navigation from there), everyone
-                            // else (students / logged-out) gets the normal job-seeker links
+                            // else (job seekers / logged-out) gets the normal job-seeker links
                             user && user.role === 'admin' ? (
                                 <li>
                                     <Link
@@ -140,7 +140,7 @@ const Navbar = () => {
                         }
                     </ul>
                     {
-                        // Show a notification bell for any logged-in user (student, recruiter, or admin)
+                        // Show a notification bell for any logged-in user (job seeker, recruiter, or admin)
         user && (
                             <Popover>
                                 <PopoverTrigger asChild>
@@ -225,8 +225,8 @@ const Navbar = () => {
                                         </div>
                                         <div className='flex flex-col my-2 text-foreground/80'>
                                             {
-                                                // Only students get a "View Profile" link (recruiters don't have a public profile page)
-                                                user && user.role === 'student' && (
+                                                // Only job seekers get a "View Profile" link (recruiters don't have a public profile page)
+                                                user && user.role === 'jobseeker' && (
                                                     <>
                                                         <Link to="/profile" className='flex items-center gap-2 rounded-md px-2 py-1.5 -mx-2 hover:bg-accent hover:text-accent-foreground transition-colors'>
                                                             <User2 className='h-4 w-4' />

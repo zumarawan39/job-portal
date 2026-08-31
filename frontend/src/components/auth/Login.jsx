@@ -15,12 +15,12 @@ import { cn } from '@/lib/utils'
 
 // The roles a user can log in as, rendered as selectable pill buttons below
 const ROLE_OPTIONS = [
-    { value: 'student', label: 'Student' },
+    { value: 'jobseeker', label: 'Job Seeker' },
     { value: 'recruiter', label: 'Recruiter' },
     { value: 'admin', label: 'Admin' },
 ];
 
-// Login form where users enter email/password and pick their role (student or recruiter)
+// Login form where users enter email/password and pick their role (job seeker or recruiter)
 const Login = () => {
     const [input, setInput] = useState({
         email: "",
