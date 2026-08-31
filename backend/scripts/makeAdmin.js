@@ -1,6 +1,6 @@
 // One-off script to promote an existing signed-up user to admin. Admin can also be picked
 // directly on the signup form now, so this script is mainly useful for promoting an account
-// that already signed up as a student/recruiter.
+// that already signed up as a job seeker/recruiter.
 // Run manually with: node scripts/makeAdmin.js someone@example.com
 import mongoose from "mongoose";
 import dotenv from "dotenv";

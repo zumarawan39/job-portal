@@ -8,7 +8,7 @@ This document explains the whole project from A to Z: what it is, how it's built
 
 A MERN-stack (MongoDB, Express, React, Node.js) job portal with three kinds of users:
 
-- **Students (job seekers):** sign up, optionally turn on email-code two-factor login, build a profile with a resume, browse/search/filter jobs, get skill-based recommendations, save jobs for later, apply, and chat with recruiters about their applications.
+- **Job Seekers:** sign up, optionally turn on email-code two-factor login, build a profile with a resume, browse/search/filter jobs, get skill-based recommendations, save jobs for later, apply, and chat with recruiters about their applications.
 - **Recruiters:** sign up, register a company, post job openings, review/accept/reject applicants, message applicants directly, and schedule interviews (with a pasted-in meeting link).
 - **Admins:** a platform-owner account (created manually, not through signup) that can see stats and remove any user, job, or company.
 
@@ -24,7 +24,7 @@ A MERN-stack (MongoDB, Express, React, Node.js) job portal with three kinds of u
 | Frontend state | Redux Toolkit + redux-persist (keeps login state after refresh) |
 | Routing | React Router v7, with route-level code-splitting (`React.lazy`) |
 | HTTP client | Axios |
-| Real-time | Socket.io (recruiter ↔ student chat per application) |
+| Real-time | Socket.io (recruiter ↔ job seeker chat per application) |
 | Backend framework | Express 4 on Node.js |
 | Database | MongoDB via Mongoose 8 |
 | Authentication | JWT in an httpOnly cookie + bcrypt password hashing + optional email-OTP two-factor login |
@@ -156,7 +156,7 @@ npm run dev
 Open the URL Vite prints (usually `http://localhost:5173`). CORS on the backend already allows both `http://localhost:5173` and `:5174` (Vite's two most common dev ports) — if Vite picks a different port, set `CLIENT_URL` in `backend/.env` to whatever URL it printed.
 
 ### Step 3 — Create an admin (optional)
-The signup form has an "Admin" option alongside Student/Recruiter — just sign up with that role selected. You can also promote an existing student/recruiter account from the command line instead:
+The signup form has an "Admin" option alongside Job Seeker/Recruiter — just sign up with that role selected. You can also promote an existing job seeker/recruiter account from the command line instead:
 ```
 cd backend
 node scripts/makeAdmin.js the-email-you-signed-up-with@example.com
@@ -164,12 +164,12 @@ node scripts/makeAdmin.js the-email-you-signed-up-with@example.com
 Log out and back in, and you'll see an "Admin Dashboard" link in the navbar instead of the usual links.
 
 ### Step 4 — Try it out
-1. Sign up once as a **student** and once as a **recruiter** (same email can't be used for both).
-2. As the student: in your profile, try turning on "two-factor login" — log out and back in to see the email-code step (check the backend console if you haven't set up real email yet).
+1. Sign up once as a **job seeker** and once as a **recruiter** (same email can't be used for both).
+2. As the job seeker: in your profile, try turning on "two-factor login" — log out and back in to see the email-code step (check the backend console if you haven't set up real email yet).
 3. As the recruiter: go to Companies → register a company → go to Jobs → post a job.
-4. As the student: add some skills to your profile, then check the home page for "Recommended For You" jobs. Browse Jobs, try the Location/Industry/Salary filters, save a job for later (bookmark icon), open a job, click Apply.
-5. Back as the recruiter: open the job's Applicants page, message the applicant (a live chat window), schedule an interview (date/time + a pasted meeting link), or accept/reject the application — the student gets a notification (and email, if configured) either way.
-6. As the student: check your Applied Jobs table for the interview details and reply in the chat.
+4. As the job seeker: add some skills to your profile, then check the home page for "Recommended For You" jobs. Browse Jobs, try the Location/Industry/Salary filters, save a job for later (bookmark icon), open a job, click Apply.
+5. Back as the recruiter: open the job's Applicants page, message the applicant (a live chat window), schedule an interview (date/time + a pasted meeting link), or accept/reject the application — the job seeker gets a notification (and email, if configured) either way.
+6. As the job seeker: check your Applied Jobs table for the interview details and reply in the chat.
 7. (Optional) Promote yourself to admin as in Step 3, and check `/platform-admin` for the stats dashboard.
 
 ---
@@ -179,12 +179,12 @@ Log out and back in, and you'll see an "Admin Dashboard" link in the navbar inst
 **Everyone**
 - Sign up / log in / log out (JWT stored in an httpOnly cookie, 1-day expiry)
 - Optional two-factor login: a 6-digit code emailed at login time (opt-in, toggle in your profile)
-- Three account roles: `student`, `recruiter`, or `admin` — all chosen at signup; an existing account can also be promoted manually (see Section 4)
+- Three account roles: `jobseeker`, `recruiter`, or `admin` — all chosen at signup; an existing account can also be promoted manually (see Section 4)
 - "Forgot password" — request a reset link by email, then set a new password from a link valid for 15 minutes
 - Toast notifications for success/error messages (via `sonner`)
 - A notification bell in the navbar (in-app notifications, e.g. application status/interview updates)
 
-**Students (job seekers)**
+**Job Seekers**
 - Update profile: name, email, phone, bio, skills, resume upload, profile photo
 - Browse all job postings, with a keyword search box and a real Location / Industry / Salary filter sidebar (all handled by the backend, not just text-matched in the browser)
 - A "Recommended For You" section on the home page, based on how many of your listed skills match each job's title/description/requirements
@@ -202,7 +202,7 @@ Log out and back in, and you'll see an "Admin Dashboard" link in the navbar inst
 - Accept or reject each applicant
 
 **Admins**
-- A dashboard (`/platform-admin`) showing platform-wide stats: total students, recruiters, jobs, companies, applications
+- A dashboard (`/platform-admin`) showing platform-wide stats: total job seekers, recruiters, jobs, companies, applications
 - View and delete any user, job posting, or company on the platform
 
 **Route protection & validation**
@@ -233,7 +233,7 @@ Base URL: `http://localhost:8000/api/v1`
 ### User routes — `/user`
 | Method | Path | Auth required? | What it does |
 |---|---|---|---|
-| POST | `/register` | No | Create an account (student or recruiter) + upload profile photo |
+| POST | `/register` | No | Create an account (job seeker or recruiter) + upload profile photo |
 | POST | `/login` | No | Log in. Returns a JWT cookie directly, OR (if the account has 2FA on) `{requiresTwoFactor:true, userId}` and emails a code instead |
 | POST | `/verify-otp` | No | Body `{userId, otp}` — completes a 2FA login, returns the same shape as a normal successful login |
 | POST | `/two-factor` | Yes | Body `{enabled}` — turns email-code 2FA on/off for the logged-in user |
@@ -256,7 +256,7 @@ Base URL: `http://localhost:8000/api/v1`
 | POST | `/post` | Create a new job posting |
 | GET | `/get` | Get jobs, filtered by any of `?keyword=&location=&industry=&salaryMin=&salaryMax=` |
 | GET | `/getadminjobs` | Get jobs posted by the logged-in recruiter |
-| GET | `/recommended` | Get up to 6 jobs recommended for the logged-in student, based on skill overlap |
+| GET | `/recommended` | Get up to 6 jobs recommended for the logged-in job seeker, based on skill overlap |
 | POST | `/save/:id` | Toggle saving/unsaving a job for later |
 | GET | `/saved` | Get the logged-in user's saved jobs |
 | GET | `/get/:id` | Get one job's full details |
@@ -265,7 +265,7 @@ Base URL: `http://localhost:8000/api/v1`
 | Method | Path | What it does |
 |---|---|---|
 | GET | `/apply/:id` | Apply to the job with this id |
-| GET | `/get` | Get all jobs the logged-in student applied to |
+| GET | `/get` | Get all jobs the logged-in job seeker applied to |
 | GET | `/:id/applicants` | Get everyone who applied to a job (recruiter view) |
 | POST | `/status/:id/update` | Update an application's status — also creates a notification + best-effort email |
 | POST | `/:id/schedule-interview` | Recruiter (job owner only) sets `{scheduledAt, meetingLink, notes}` — notifies the applicant |
@@ -287,7 +287,7 @@ Real-time delivery is via Socket.io (not a REST endpoint): connect, emit `join_r
 ### Admin routes — `/admin` (require auth + `role === 'admin'`)
 | Method | Path | What it does |
 |---|---|---|
-| GET | `/stats` | Platform-wide counts: students, recruiters, jobs, companies, applications |
+| GET | `/stats` | Platform-wide counts: job seekers, recruiters, jobs, companies, applications |
 | GET | `/users` | List every user (passwords excluded) |
 | DELETE | `/users/:id` | Delete a user |
 | GET | `/jobs` | List every job on the platform |
@@ -299,7 +299,7 @@ Real-time delivery is via Socket.io (not a REST endpoint): connect, emit `join_r
 
 ## 8. Database Models (MongoDB Collections)
 
-**User** — `fullname`, `email` (unique), `phoneNumber`, `password` (hashed), `role` (`student`/`recruiter`/`admin`), `resetPasswordToken`, `resetPasswordExpire`, `twoFactorEnabled`, `twoFactorOTP` (hashed), `twoFactorOTPExpire`, `savedJobs[]` (ref Job), `profile: { bio, skills[], resume, resumeOriginalName, profilePhoto, company (recruiters only) }`
+**User** — `fullname`, `email` (unique), `phoneNumber`, `password` (hashed), `role` (`jobseeker`/`recruiter`/`admin`), `resetPasswordToken`, `resetPasswordExpire`, `twoFactorEnabled`, `twoFactorOTP` (hashed), `twoFactorOTPExpire`, `savedJobs[]` (ref Job), `profile: { bio, skills[], resume, resumeOriginalName, profilePhoto, company (recruiters only) }`
 
 **Company** — `name` (unique), `description`, `website`, `location`, `logo`, `userId` (owning recruiter)
 
@@ -330,7 +330,7 @@ Six things were built: the admin role + dashboard, password reset via email, in-
 Four more things were built:
 - **Two-factor authentication** — opt-in per user (toggle in Profile). When on, logging in emails a 6-digit code (also printed to the server console for local testing) instead of logging in immediately; a new `/verify-otp` step completes the login.
 - **Save job for later** — a bookmark button on every job card plus a "Saved Jobs" page.
-- **Recruiter–student chat + interview scheduling**, in place of "real-time chat/video interviews": a genuinely working real-time text chat (Socket.io) per application, and a simple interview scheduler (date/time + a pasted meeting link + notes). **Design reasoning:** a real custom video-calling system needs STUN/TURN infrastructure to work reliably outside of two people on the same network — building that from scratch for a student project would likely be fragile and fail during a live demo. A working chat plus a "paste your Meet/Zoom link" scheduler achieves the same practical goal (recruiter and candidate can coordinate and talk) without that risk. If real embedded video is a hard requirement for your report, integrating a third-party service (e.g. Daily.co or Twilio Video) on top of this scheduling feature would be the next step.
+- **Recruiter–job seeker chat + interview scheduling**, in place of "real-time chat/video interviews": a genuinely working real-time text chat (Socket.io) per application, and a simple interview scheduler (date/time + a pasted meeting link + notes). **Design reasoning:** a real custom video-calling system needs STUN/TURN infrastructure to work reliably outside of two people on the same network — building that from scratch for a student project would likely be fragile and fail during a live demo. A working chat plus a "paste your Meet/Zoom link" scheduler achieves the same practical goal (recruiter and candidate can coordinate and talk) without that risk. If real embedded video is a hard requirement for your report, integrating a third-party service (e.g. Daily.co or Twilio Video) on top of this scheduling feature would be the next step.
 - **Request validation (Zod)** — register/login/post-job/register-company request bodies are now validated by schema before reaching the controller.
 - Also code-split the frontend bundle (`React.lazy` + `Suspense` per route), so the browser no longer has to download one single ~750kB JS file up front.
 
@@ -349,7 +349,7 @@ Five more things were built:
 
 - Job recommendations use a simple keyword-overlap score — not machine learning. Accurate to call it "rule-based," not "AI," if asked directly.
 - Video calls only work embedded in-app for Daily.co rooms (auto-created when configured); pasted Zoom/Meet/Teams links still just open in a new tab, since those platforms block iframe embedding for security reasons — that's a limitation of those services, not something fixable from this app's side.
-- Admin accounts can be created directly from the signup form (role "Admin"), same as student/recruiter — there's no extra gate. `backend/scripts/makeAdmin.js` remains available for promoting an existing account instead.
+- Admin accounts can be created directly from the signup form (role "Admin"), same as job seeker/recruiter — there's no extra gate. `backend/scripts/makeAdmin.js` remains available for promoting an existing account instead.
 - Most backend `catch` blocks just `console.log(error)` without sending an error response back to the frontend — predates this work, wasn't in scope to rewrite everywhere.
 - Email sending (password reset, 2FA codes, notifications) and Daily.co room creation are both best-effort: if not configured, or the request to the external service fails, the app logs a warning and falls back gracefully rather than failing the request.
 - The `mutler.js` filename (in `backend/middlewares/`) is a typo of "multer" carried over from the original code; left as-is to avoid unnecessary churn.

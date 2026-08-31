@@ -9,7 +9,7 @@ import sendEmail from "../utils/sendEmail.js";
 // so the login cookie needs sameSite:'none' + secure to be sent cross-site at all.
 const isProd = process.env.NODE_ENV === "production";
 
-// Sign up a new user (student, recruiter, or admin)
+// Sign up a new user (job seeker, recruiter, or admin)
 export const register = async (req, res) => {
     try {
         const { fullname, email, phoneNumber, password, role } = req.body;

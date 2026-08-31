@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-// Defines what data an "Application" (a student applying to a job) looks like in the database
+// Defines what data an "Application" (a job seeker applying to a job) looks like in the database
 const applicationSchema = new mongoose.Schema({
     job:{
         type:mongoose.Schema.Types.ObjectId,

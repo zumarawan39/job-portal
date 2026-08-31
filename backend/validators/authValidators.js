@@ -15,14 +15,14 @@ export const registerSchema = z.object({
         { message: pkPhoneMessage }
     ),
     password: z.string().min(6, "Password must be at least 6 characters."),
-    role: z.enum(['student', 'recruiter', 'admin'])
+    role: z.enum(['jobseeker', 'recruiter', 'admin'])
 });
 
 // Validates the login form's body fields
 export const loginSchema = z.object({
     email: z.string().email("Enter a valid email address."),
     password: z.string().min(1, "Password is required."),
-    role: z.enum(['student', 'recruiter', 'admin'])
+    role: z.enum(['jobseeker', 'recruiter', 'admin'])
 });
 
 // Validates the "update profile" form's body fields - all optional since this route

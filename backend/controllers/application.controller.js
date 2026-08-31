@@ -5,7 +5,7 @@ import { User } from "../models/user.model.js";
 import sendEmail from "../utils/sendEmail.js";
 import createVideoRoom from "../utils/dailyVideo.js";
 
-// Let a logged-in student apply to a job
+// Let a logged-in job seeker apply to a job
 export const applyJob = async (req, res) => {
     try {
         const userId = req.id; // comes from the isAuthenticated middleware
@@ -55,7 +55,7 @@ export const applyJob = async (req, res) => {
         });
     }
 };
-// Get all jobs a logged-in student has applied to
+// Get all jobs a logged-in job seeker has applied to
 export const getAppliedJobs = async (req,res) => {
     try {
         const userId = req.id;

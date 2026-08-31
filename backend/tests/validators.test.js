@@ -14,7 +14,7 @@ test("registerSchema succeeds on valid input", () => {
         email: "jane@example.com",
         phoneNumber: "3001234567",
         password: "secret123",
-        role: "student"
+        role: "jobseeker"
     });
     assert.strictEqual(result.success, true);
 });
@@ -24,7 +24,7 @@ test("registerSchema fails on missing fullname", () => {
         email: "jane@example.com",
         phoneNumber: "3001234567",
         password: "secret123",
-        role: "student"
+        role: "jobseeker"
     });
     assert.strictEqual(result.success, false);
 });
@@ -35,7 +35,7 @@ test("registerSchema fails on invalid email", () => {
         email: "not-an-email",
         phoneNumber: "3001234567",
         password: "secret123",
-        role: "student"
+        role: "jobseeker"
     });
     assert.strictEqual(result.success, false);
 });
@@ -46,7 +46,7 @@ test("registerSchema fails on a non-Pakistani-mobile phone number", () => {
         email: "jane@example.com",
         phoneNumber: "1234567890",
         password: "secret123",
-        role: "student"
+        role: "jobseeker"
     });
     assert.strictEqual(result.success, false);
 });

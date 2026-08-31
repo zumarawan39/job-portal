@@ -1,4 +1,4 @@
-// One-off script to fill the database with test data (recruiters, students, companies,
+// One-off script to fill the database with test data (recruiters, job seekers, companies,
 // jobs, applications, interviews, chat messages, notifications) so every feature can be
 // clicked through manually. Safe to re-run - it only ever touches the test records it
 // creates (matched by the fixed emails/names below), never any other data in the DB.
@@ -77,16 +77,16 @@ const run = async () => {
 
     const [student1, student2, student3] = await User.create([
         {
-            fullname: "Ahmed Raza", email: "student1@test.com", phoneNumber: 3004444444, password: hashedPassword, role: "student",
+            fullname: "Ahmed Raza", email: "student1@test.com", phoneNumber: 3004444444, password: hashedPassword, role: "jobseeker",
             profile: { bio: "Frontend-leaning full stack developer.", skills: ["React", "JavaScript", "Node.js", "MongoDB", "CSS"] },
         },
         {
-            fullname: "Fatima Noor", email: "student2@test.com", phoneNumber: 3005555555, password: hashedPassword, role: "student",
+            fullname: "Fatima Noor", email: "student2@test.com", phoneNumber: 3005555555, password: hashedPassword, role: "jobseeker",
             profile: { bio: "Data-focused analyst, loves spreadsheets and SQL.", skills: ["Python", "SQL", "Data Analysis", "Excel"] },
             twoFactorEnabled: true, // lets you test the email-OTP login flow with this account
         },
         {
-            fullname: "Hassan Ali", email: "student3@test.com", phoneNumber: 3006666666, password: hashedPassword, role: "student",
+            fullname: "Hassan Ali", email: "student3@test.com", phoneNumber: 3006666666, password: hashedPassword, role: "jobseeker",
             profile: { bio: "Backend/cloud engineer.", skills: ["Java", "Spring Boot", "AWS", "Docker"] },
         },
     ]);
@@ -160,13 +160,13 @@ const run = async () => {
     student1.savedJobs.push(job4._id, job6._id); await student1.save();
     student2.savedJobs.push(job2._id); await student2.save();
     student3.savedJobs.push(job3._id); await student3.save();
-    console.log("Saved jobs set for students.");
+    console.log("Saved jobs set for job seekers.");
 
     console.log("\nSeed complete. All test accounts use password: " + PASSWORD);
     console.log(`
 Admin:      admin@test.com
 Recruiters: recruiter1@test.com (NimbusWorks Technologies), recruiter2@test.com (Meridian Growth Marketing), recruiter3@test.com (Apex Capital Advisors)
-Students:   student1@test.com (Ahmed - React/Node skills), student2@test.com (Fatima - has 2FA ON, Python/SQL skills), student3@test.com (Hassan - Java/AWS skills)
+Job seekers: student1@test.com (Ahmed - React/Node skills), student2@test.com (Fatima - has 2FA ON, Python/SQL skills), student3@test.com (Hassan - Java/AWS skills)
 `);
 
     await mongoose.disconnect();

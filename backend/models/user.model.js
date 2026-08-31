@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-// Defines what data a "User" (student or recruiter) looks like in the database
+// Defines what data a "User" (job seeker or recruiter) looks like in the database
 const userSchema = new mongoose.Schema({
     fullname: {
         type: String,
@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     },
     role:{
         type:String,
-        enum:['student','recruiter','admin'], // a user is either a job seeker, a recruiter, or an admin
+        enum:['jobseeker','recruiter','admin'], // a user is either a job seeker, a recruiter, or an admin
         required:true
     },
     profile:{

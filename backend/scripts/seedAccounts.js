@@ -142,7 +142,7 @@ const run = async () => {
             email: s.email,
             phoneNumber: s.phoneNumber,
             password: hashedPassword,
-            role: "student",
+            role: "jobseeker",
             profile: { bio: s.bio, skills: s.skills },
         }))
     );

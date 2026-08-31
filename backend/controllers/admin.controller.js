@@ -6,7 +6,7 @@ import { Application } from "../models/application.model.js";
 // Get overall counts for the admin dashboard
 export const getStats = async (req, res) => {
     try {
-        const totalStudents = await User.countDocuments({ role: 'student' });
+        const totalJobSeekers = await User.countDocuments({ role: 'jobseeker' });
         const totalRecruiters = await User.countDocuments({ role: 'recruiter' });
         const totalJobs = await Job.countDocuments();
         const totalCompanies = await Company.countDocuments();
@@ -15,7 +15,7 @@ export const getStats = async (req, res) => {
         return res.status(200).json({
             success: true,
             stats: {
-                totalStudents,
+                totalJobSeekers,
                 totalRecruiters,
                 totalJobs,
                 totalCompanies,

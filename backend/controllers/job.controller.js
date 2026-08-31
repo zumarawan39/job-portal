@@ -46,7 +46,7 @@ export const postJob = async (req, res) => {
         });
     }
 }
-// Student browses/searches all jobs, optionally filtered by keyword/location/industry/salary range
+// Job seeker browses/searches all jobs, optionally filtered by keyword/location/industry/salary range
 export const getAllJobs = async (req, res) => {
     try {
         const { keyword, location, industry, salaryMin, salaryMax } = req.query;
@@ -167,7 +167,7 @@ export const getAdminJobs = async (req, res) => {
         });
     }
 }
-// Suggest jobs for the logged-in student based on the skills on their profile
+// Suggest jobs for the logged-in job seeker based on the skills on their profile
 export const getRecommendedJobs = async (req, res) => {
     try {
         const user = await User.findById(req.id);
