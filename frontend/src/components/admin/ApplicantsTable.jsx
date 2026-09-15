@@ -140,8 +140,8 @@ const ApplicantsTable = () => {
             </Card>
 
             {/* Chat dialog */}
-            <Dialog open={!!chatApplicationId}>
-                <DialogContent className="sm:max-w-[500px]" onInteractOutside={() => setChatApplicationId(null)}>
+            <Dialog open={!!chatApplicationId} onOpenChange={(isOpen) => !isOpen && setChatApplicationId(null)}>
+                <DialogContent className="sm:max-w-[500px]">
                     <DialogHeader>
                         <DialogTitle>Chat</DialogTitle>
                     </DialogHeader>
@@ -152,8 +152,8 @@ const ApplicantsTable = () => {
             </Dialog>
 
             {/* Schedule interview dialog */}
-            <Dialog open={!!scheduleApplicationId}>
-                <DialogContent className="sm:max-w-[425px]" onInteractOutside={() => setScheduleApplicationId(null)}>
+            <Dialog open={!!scheduleApplicationId} onOpenChange={(isOpen) => !isOpen && setScheduleApplicationId(null)}>
+                <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>Schedule Interview</DialogTitle>
                     </DialogHeader>

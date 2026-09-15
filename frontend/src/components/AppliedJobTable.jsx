@@ -65,8 +65,8 @@ const AppliedJobTable = () => {
                     }
                 </TableBody>
             </Table>
-            <Dialog open={!!chatApplicationId}>
-                <DialogContent className="sm:max-w-[500px]" onInteractOutside={() => setChatApplicationId(null)}>
+            <Dialog open={!!chatApplicationId} onOpenChange={(isOpen) => !isOpen && setChatApplicationId(null)}>
+                <DialogContent className="sm:max-w-[500px]">
                     <DialogHeader>
                         <DialogTitle>Chat</DialogTitle>
                     </DialogHeader>
