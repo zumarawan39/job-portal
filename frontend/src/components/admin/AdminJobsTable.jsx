@@ -55,7 +55,7 @@ const AdminJobsTable = () => {
                                                 <MoreHorizontal className="h-4 w-4" />
                                             </PopoverTrigger>
                                             <PopoverContent className="w-40 p-1">
-                                                <div onClick={()=> navigate(`/admin/jobs/${job._id}/applicants`)} className='flex items-center w-full gap-2 rounded-sm px-2 py-1.5 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground'>
+                                                <div onClick={()=> navigate(`/recruiter/jobs/${job._id}/applicants`)} className='flex items-center w-full gap-2 rounded-sm px-2 py-1.5 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground'>
                                                     <Eye className='w-4 h-4'/>
                                                     <span>Applicants</span>
                                                 </div>

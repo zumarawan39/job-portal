@@ -21,7 +21,7 @@ const JobDescription = () => {
     const isIntiallyApplied = singleJob?.applications?.some(application => application.applicant === user?._id) || false;
     const [isApplied, setIsApplied] = useState(isIntiallyApplied);
 
-    // Read the job id from the URL (e.g. /description/:id)
+    // Read the job id from the URL (e.g. /jobseeker/description/:id)
     const params = useParams();
     const jobId = params.id;
     const dispatch = useDispatch();

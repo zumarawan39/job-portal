@@ -15,8 +15,8 @@ import { Loader2, Building2, Briefcase } from 'lucide-react'
 import { PK_CITIES, JOB_TYPES, EXPERIENCE_LEVELS } from '@/utils/jobOptions'
 
 const nav = [
-    { to: '/admin/companies', label: 'Companies', icon: Building2 },
-    { to: '/admin/jobs', label: 'Jobs', icon: Briefcase },
+    { to: '/recruiter/companies', label: 'Companies', icon: Building2 },
+    { to: '/recruiter/jobs', label: 'Jobs', icon: Briefcase },
 ]
 
 // Form for creating a new job posting (admin only)
@@ -90,7 +90,7 @@ const PostJob = () => {
             if(res.data.success){
                 toast.success(res.data.message);
                 // Go back to the admin jobs list after successfully posting
-                navigate("/admin/jobs");
+                navigate("/recruiter/jobs");
             }
         } catch (error) {
             toast.error(error?.response?.data?.message || "Something went wrong.");

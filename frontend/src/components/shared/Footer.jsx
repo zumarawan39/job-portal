@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 
 const links = [
   { to: '/', label: 'Home' },
-  { to: '/jobs', label: 'Jobs' },
-  { to: '/browse', label: 'Browse' },
+  { to: '/jobseeker/jobs', label: 'Jobs' },
+  { to: '/jobseeker/browse', label: 'Browse' },
 ];
 
 // Simple footer with brand + quick links, shown on every page

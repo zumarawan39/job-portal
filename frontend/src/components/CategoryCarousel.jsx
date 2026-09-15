@@ -17,12 +17,12 @@ const category = [
 // Shows a scrollable carousel of job category buttons on the home page
 const CategoryCarousel = () => {
     const dispatch = useDispatch();
-    // Used to go to the /browse page after picking a category
+    // Used to go to the /jobseeker/browse page after picking a category
     const navigate = useNavigate();
     const searchJobHandler = (query) => {
         // Save the chosen category as the search query so the Browse page can filter jobs by it
         dispatch(setSearchedQuery(query));
-        navigate("/browse");
+        navigate("/jobseeker/browse");
     }
 
     return (

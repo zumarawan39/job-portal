@@ -80,8 +80,8 @@ const Navbar = () => {
     // Public job-seeker links (used for logged-out visitors and job seekers)
     const publicLinks = [
         { to: '/', label: 'Home' },
-        { to: '/jobs', label: 'Jobs' },
-        { to: '/browse', label: 'Browse' },
+        { to: '/jobseeker/jobs', label: 'Jobs' },
+        { to: '/jobseeker/browse', label: 'Browse' },
     ];
     const isLinkActive = (to) => location.pathname === to;
 
@@ -101,10 +101,10 @@ const Navbar = () => {
                             user && user.role === 'admin' ? (
                                 <li>
                                     <Link
-                                        to='/platform-admin'
+                                        to='/admin'
                                         className={cn(
                                             'flex items-center gap-1.5 rounded-md px-3 py-2 text-sm transition-colors',
-                                            isLinkActive('/platform-admin') ? 'text-primary' : 'text-foreground/80 hover:text-foreground'
+                                            isLinkActive('/admin') ? 'text-primary' : 'text-foreground/80 hover:text-foreground'
                                         )}
                                     >
                                         <LayoutDashboard className='h-4 w-4' /> Admin Dashboard
@@ -113,10 +113,10 @@ const Navbar = () => {
                             ) : user && user.role === 'recruiter' ? (
                                 <li>
                                     <Link
-                                        to='/admin/companies'
+                                        to='/recruiter/companies'
                                         className={cn(
                                             'flex items-center gap-1.5 rounded-md px-3 py-2 text-sm transition-colors',
-                                            location.pathname.startsWith('/admin') ? 'text-primary' : 'text-foreground/80 hover:text-foreground'
+                                            location.pathname.startsWith('/recruiter') ? 'text-primary' : 'text-foreground/80 hover:text-foreground'
                                         )}
                                     >
                                         <LayoutDashboard className='h-4 w-4' /> Dashboard
@@ -228,11 +228,11 @@ const Navbar = () => {
                                                 // Only job seekers get a "View Profile" link (recruiters don't have a public profile page)
                                                 user && user.role === 'jobseeker' && (
                                                     <>
-                                                        <Link to="/profile" className='flex items-center gap-2 rounded-md px-2 py-1.5 -mx-2 hover:bg-accent hover:text-accent-foreground transition-colors'>
+                                                        <Link to="/jobseeker/profile" className='flex items-center gap-2 rounded-md px-2 py-1.5 -mx-2 hover:bg-accent hover:text-accent-foreground transition-colors'>
                                                             <User2 className='h-4 w-4' />
                                                             <span className='text-sm'>View Profile</span>
                                                         </Link>
-                                                        <Link to="/saved-jobs" className='flex items-center gap-2 rounded-md px-2 py-1.5 -mx-2 hover:bg-accent hover:text-accent-foreground transition-colors'>
+                                                        <Link to="/jobseeker/saved-jobs" className='flex items-center gap-2 rounded-md px-2 py-1.5 -mx-2 hover:bg-accent hover:text-accent-foreground transition-colors'>
                                                             <Bookmark className='h-4 w-4' />
                                                             <span className='text-sm'>Saved Jobs</span>
                                                         </Link>

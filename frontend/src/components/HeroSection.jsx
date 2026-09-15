@@ -15,13 +15,13 @@ const features = [
 const HeroSection = () => {
     const [query, setQuery] = useState("");
     const dispatch = useDispatch();
-    // Used to go to the /browse page after searching
+    // Used to go to the /jobseeker/browse page after searching
     const navigate = useNavigate();
 
     const searchJobHandler = () => {
         // Save the typed search text in Redux so the Browse page can filter jobs by it
         dispatch(setSearchedQuery(query));
-        navigate("/browse");
+        navigate("/jobseeker/browse");
     }
 
     return (

@@ -14,8 +14,8 @@ import { setSingleCompany } from '@/redux/companySlice'
 import { Building2, Briefcase } from 'lucide-react'
 
 const nav = [
-    { to: '/admin/companies', label: 'Companies', icon: Building2 },
-    { to: '/admin/jobs', label: 'Jobs', icon: Briefcase },
+    { to: '/recruiter/companies', label: 'Companies', icon: Building2 },
+    { to: '/recruiter/jobs', label: 'Jobs', icon: Briefcase },
 ]
 
 // First step of creating a new company: just asking for a name (admin only)
@@ -40,7 +40,7 @@ const CompanyCreate = () => {
                 toast.success(res.data.message);
                 const companyId = res?.data?.company?._id;
                 // Go to the full setup page for this new company
-                navigate(`/admin/companies/${companyId}`);
+                navigate(`/recruiter/companies/${companyId}`);
             }
         } catch (error) {
             console.error(error);
@@ -65,7 +65,7 @@ const CompanyCreate = () => {
                                 onChange={(e) => setCompanyName(e.target.value)}
                             />
                             <div className='flex items-center gap-2 mt-6'>
-                                <Button variant="outline" onClick={() => navigate("/admin/companies")}>Cancel</Button>
+                                <Button variant="outline" onClick={() => navigate("/recruiter/companies")}>Cancel</Button>
                                 <Button onClick={registerNewCompany}>Continue</Button>
                             </div>
                         </CardContent>

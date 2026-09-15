@@ -60,7 +60,7 @@ const CompaniesTable = () => {
                                                 <MoreHorizontal className="h-4 w-4" />
                                             </PopoverTrigger>
                                             <PopoverContent className="w-32 p-1">
-                                                <div onClick={()=> navigate(`/admin/companies/${company._id}`)} className='flex items-center gap-2 w-full rounded-sm px-2 py-1.5 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground'>
+                                                <div onClick={()=> navigate(`/recruiter/companies/${company._id}`)} className='flex items-center gap-2 w-full rounded-sm px-2 py-1.5 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground'>
                                                     <Edit2 className='w-4 h-4' />
                                                     <span>Edit</span>
                                                 </div>

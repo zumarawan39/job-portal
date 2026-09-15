@@ -10,13 +10,13 @@ import { setAllApplicants } from '@/redux/applicationSlice';
 import { Building2, Briefcase } from 'lucide-react'
 
 const nav = [
-    { to: '/admin/companies', label: 'Companies', icon: Building2 },
-    { to: '/admin/jobs', label: 'Jobs', icon: Briefcase },
+    { to: '/recruiter/companies', label: 'Companies', icon: Building2 },
+    { to: '/recruiter/jobs', label: 'Jobs', icon: Briefcase },
 ]
 
 // Page that shows all applicants who applied to one specific job (admin only)
 const Applicants = () => {
-    // Read the job id from the URL (e.g. /admin/jobs/:id/applicants)
+    // Read the job id from the URL (e.g. /recruiter/jobs/:id/applicants)
     const params = useParams();
     const dispatch = useDispatch();
     // Read the applicants data for this job from the application slice in Redux

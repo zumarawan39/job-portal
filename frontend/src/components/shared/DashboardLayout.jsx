@@ -16,8 +16,8 @@ const DashboardLayout = ({ title, description, nav, actions, children }) => {
                         {
                             nav.map((item) => {
                                 // `end: true` (set on a nav item whose `to` is a prefix of a sibling's,
-                                // e.g. platform-admin's Overview at "/platform-admin" vs. its
-                                // "/platform-admin/users") requires an exact match instead of a prefix
+                                // e.g. platform-admin's Overview at "/admin" vs. its
+                                // "/admin/users") requires an exact match instead of a prefix
                                 // match, so the parent link doesn't stay lit up on every sub-page too.
                                 const active = item.end
                                     ? location.pathname === item.to

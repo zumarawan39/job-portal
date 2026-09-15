@@ -11,8 +11,8 @@ import { setSearchJobByText } from '@/redux/jobSlice'
 import { Building2, Briefcase } from 'lucide-react'
 
 const nav = [
-  { to: '/admin/companies', label: 'Companies', icon: Building2 },
-  { to: '/admin/jobs', label: 'Jobs', icon: Briefcase },
+  { to: '/recruiter/companies', label: 'Companies', icon: Building2 },
+  { to: '/recruiter/jobs', label: 'Jobs', icon: Briefcase },
 ]
 
 // Page for admins to see all jobs they posted, search them, and create new ones
@@ -45,7 +45,7 @@ const AdminJobs = () => {
               placeholder="Filter by name, role"
               onChange={(e) => setInput(e.target.value)}
             />
-            <Button onClick={() => navigate("/admin/jobs/create")}>New Jobs</Button>
+            <Button onClick={() => navigate("/recruiter/jobs/create")}>New Jobs</Button>
           </>
         }
       >

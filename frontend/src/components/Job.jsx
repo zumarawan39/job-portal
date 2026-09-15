@@ -98,7 +98,7 @@ const Job = ({ job }) => {
                 <Badge variant="outline" className="font-mono font-semibold text-brand-orange border-brand-orange/30">{job?.salary} LPA</Badge>
             </div>
             <div className='flex items-center gap-3 mt-4'>
-                <Button onClick={() => navigate(`/description/${job?._id}`)} variant="outline" className="flex-1">Details</Button>
+                <Button onClick={() => navigate(`/jobseeker/description/${job?._id}`)} variant="outline" className="flex-1">Details</Button>
                 {
                     isJobSeeker && (
                         <Button onClick={saveJobHandler} className="flex-1">{isSaved ? "Saved" : "Save For Later"}</Button>

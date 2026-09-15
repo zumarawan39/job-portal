@@ -55,24 +55,25 @@ const routeList = [
     path: '/signup',
     element: withSuspense(<Signup />)
   },
+  // Job-seeker routes live under /jobseeker/* (public visitors browsing jobs land here too)
   {
-    path: "/jobs",
+    path: "/jobseeker/jobs",
     element: withSuspense(<Jobs />)
   },
   {
-    path: "/description/:id",
+    path: "/jobseeker/description/:id",
     element: withSuspense(<JobDescription />)
   },
   {
-    path: "/browse",
+    path: "/jobseeker/browse",
     element: withSuspense(<Browse />)
   },
   {
-    path: "/profile",
+    path: "/jobseeker/profile",
     element: withSuspense(<Profile />)
   },
   {
-    path: "/saved-jobs",
+    path: "/jobseeker/saved-jobs",
     element: withSuspense(<SavedJobs />)
   },
   {
@@ -87,47 +88,48 @@ const routeList = [
     path: "/verify-otp",
     element: withSuspense(<VerifyOtp />)
   },
-  // Real platform-admin dashboard (not to be confused with the recruiter "admin" routes below).
+  // Real platform-admin dashboard, served at /admin/* (not to be confused with the
+  // recruiter routes below, which live at /recruiter/*).
   // Each sidebar section is its own route/page rather than an anchor on one long page.
   {
-    path: "/platform-admin",
+    path: "/admin",
     element: <PlatformAdminRoute>{withSuspense(<PlatformAdminOverview />)}</PlatformAdminRoute>
   },
   {
-    path: "/platform-admin/users",
+    path: "/admin/users",
     element: <PlatformAdminRoute>{withSuspense(<PlatformAdminUsers />)}</PlatformAdminRoute>
   },
   {
-    path: "/platform-admin/jobs",
+    path: "/admin/jobs",
     element: <PlatformAdminRoute>{withSuspense(<PlatformAdminJobs />)}</PlatformAdminRoute>
   },
   {
-    path: "/platform-admin/companies",
+    path: "/admin/companies",
     element: <PlatformAdminRoute>{withSuspense(<PlatformAdminCompanies />)}</PlatformAdminRoute>
   },
-  // Admin-only routes start here (wrapped in ProtectedRoute so only admins can view them)
+  // Recruiter-only routes start here (wrapped in ProtectedRoute so only recruiters can view them), served at /recruiter/*
   {
-    path:"/admin/companies",
+    path:"/recruiter/companies",
     element: <ProtectedRoute>{withSuspense(<Companies/>)}</ProtectedRoute>
   },
   {
-    path:"/admin/companies/create",
+    path:"/recruiter/companies/create",
     element: <ProtectedRoute>{withSuspense(<CompanyCreate/>)}</ProtectedRoute>
   },
   {
-    path:"/admin/companies/:id",
+    path:"/recruiter/companies/:id",
     element:<ProtectedRoute>{withSuspense(<CompanySetup/>)}</ProtectedRoute>
   },
   {
-    path:"/admin/jobs",
+    path:"/recruiter/jobs",
     element:<ProtectedRoute>{withSuspense(<AdminJobs/>)}</ProtectedRoute>
   },
   {
-    path:"/admin/jobs/create",
+    path:"/recruiter/jobs/create",
     element:<ProtectedRoute>{withSuspense(<PostJob/>)}</ProtectedRoute>
   },
   {
-    path:"/admin/jobs/:id/applicants",
+    path:"/recruiter/jobs/:id/applicants",
     element:<ProtectedRoute>{withSuspense(<Applicants/>)}</ProtectedRoute>
   },
   // Catches any URL that doesn't match a route above

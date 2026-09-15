@@ -20,7 +20,7 @@ const Home = () => {
   // Runs once on mount; sends recruiters to their admin page instead of the normal home page
   useEffect(() => {
     if (user?.role === 'recruiter') {
-      navigate("/admin/companies");
+      navigate("/recruiter/companies");
     }
   }, []);
   return (

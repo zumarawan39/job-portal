@@ -14,13 +14,13 @@ import { useSelector } from 'react-redux'
 import useGetCompanyById from '@/hooks/useGetCompanyById'
 
 const nav = [
-    { to: '/admin/companies', label: 'Companies', icon: Building2 },
-    { to: '/admin/jobs', label: 'Jobs', icon: Briefcase },
+    { to: '/recruiter/companies', label: 'Companies', icon: Building2 },
+    { to: '/recruiter/jobs', label: 'Jobs', icon: Briefcase },
 ]
 
 // Form for editing an existing company's details (name, description, logo, etc.)
 const CompanySetup = () => {
-    // Read the company id from the URL (e.g. /admin/companies/:id)
+    // Read the company id from the URL (e.g. /recruiter/companies/:id)
     const params = useParams();
     // Custom hook that fetches this one company's data by id
     useGetCompanyById(params.id);
@@ -71,7 +71,7 @@ const CompanySetup = () => {
             if (res.data.success) {
                 toast.success(res.data.message);
                 // Go back to the companies list after a successful update
-                navigate("/admin/companies");
+                navigate("/recruiter/companies");
             }
         } catch (error) {
             console.error(error);
@@ -100,7 +100,7 @@ const CompanySetup = () => {
                 title="Company Setup"
                 description="Update your company's details"
                 actions={
-                    <Button onClick={() => navigate("/admin/companies")} variant="outline" className="flex items-center gap-2">
+                    <Button onClick={() => navigate("/recruiter/companies")} variant="outline" className="flex items-center gap-2">
                         <ArrowLeft className="h-4 w-4" />
                         <span>Back</span>
                     </Button>
