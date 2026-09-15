@@ -95,7 +95,7 @@ const Job = ({ job }) => {
             <div className='flex flex-wrap items-center gap-2 mt-4'>
                 <Badge variant="secondary" className="font-semibold">{job?.position} Positions</Badge>
                 <Badge variant="outline" className="font-semibold text-primary border-primary/30">{job?.jobType}</Badge>
-                <Badge variant="outline" className="font-mono font-semibold text-brand-orange border-brand-orange/30">{job?.salary} LPA</Badge>
+                <Badge variant="outline" className="font-mono font-semibold text-brand-orange border-brand-orange/30">PKR {job?.salary?.toLocaleString()}/month</Badge>
             </div>
             <div className='flex items-center gap-3 mt-4'>
                 <Button onClick={() => navigate(`/jobseeker/description/${job?._id}`)} variant="outline" className="flex-1">Details</Button>

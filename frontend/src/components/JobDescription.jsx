@@ -102,9 +102,9 @@ const JobDescription = () => {
                 <Card className='h-fit lg:sticky lg:top-20'>
                     <CardHeader className='pb-3'>
                         <div className='flex items-center gap-2 font-mono text-2xl font-bold text-brand-orange'>
-                            <Wallet className='h-5 w-5' /> {singleJob?.salary} LPA
+                            <Wallet className='h-5 w-5' /> PKR {singleJob?.salary?.toLocaleString()}
                         </div>
-                        <p className='text-xs text-muted-foreground'>Annual salary</p>
+                        <p className='text-xs text-muted-foreground'>Monthly salary</p>
                     </CardHeader>
                     <CardContent className='flex flex-col gap-3 pt-0'>
                         <div className='flex items-center justify-between border-t border-border pt-3 text-sm'>
