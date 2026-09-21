@@ -14,10 +14,12 @@ import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 // The roles a new user can sign up as, rendered as selectable pill buttons below.
+// Admin accounts are not self-service - create them directly via the /register API
+// (see backend/controllers/user.controller.js) or promote an existing user with
+// backend/scripts/makeAdmin.js.
 const ROLE_OPTIONS = [
     { value: 'jobseeker', label: 'Job Seeker' },
     { value: 'recruiter', label: 'Recruiter' },
-    { value: 'admin', label: 'Admin' },
 ];
 
 // Signup form where new users create an account, choosing job seeker or recruiter role
