@@ -9,10 +9,7 @@ import { setFilters, clearFilters } from '@/redux/jobSlice'
 import { PK_CITIES, INDUSTRY_OPTIONS, SALARY_RANGES } from '@/utils/jobOptions'
 import { X } from 'lucide-react'
 
-// Location and Industry filter options (sent to the backend as-is; industry values are
-// matched against job title/description/requirements via a substring regex on the backend,
-// so these are broad role-family words rather than exact titles). Shared with the post-job
-// form via jobOptions.js so a recruiter can never post a job no filter option can reach.
+// Location and Industry options shared with the post-job form via jobOptions.js
 const locationOptions = PK_CITIES;
 const industryOptions = INDUSTRY_OPTIONS;
 // Salary labels shown to the user, mapped to an explicit numeric min/max range sent to the backend
@@ -20,12 +17,9 @@ const salaryOptions = SALARY_RANGES;
 const CUSTOM_SALARY_LABEL = 'Custom Range';
 const hasValue = (value) => value !== '' && value !== undefined && value !== null;
 
-// Shows radio-button filters (Location, Industry, Salary) to narrow down job search results.
-// Each group keeps its own selection state so picking one group's option doesn't clear another's.
+// Shows radio-button filters (Location, Industry, Salary) to narrow down job search results
 const FilterCard = () => {
-    // Seed each group's visual selection from the current Redux filters (not just '') so a
-    // remount (e.g. navigating away and back, or a page reload) shows the selection that's
-    // actually being applied, instead of an empty-looking sidebar silently filtering results.
+    // Seed each group's selection from the current Redux filters so a remount shows what's applied
     const { filters } = useSelector(store => store.job);
     const [selectedLocation, setSelectedLocation] = useState(filters?.location || '');
     const [selectedIndustry, setSelectedIndustry] = useState(filters?.industry || '');
@@ -37,8 +31,7 @@ const FilterCard = () => {
         if (hasValue(filters?.salaryMin) || hasValue(filters?.salaryMax)) return CUSTOM_SALARY_LABEL;
         return '';
     });
-    // Pre-fill the custom inputs when the active filter is a custom (non-preset) salary range,
-    // so reloading the page shows the values that are actually being applied.
+    // Pre-fill the custom inputs when the active filter is a custom (non-preset) salary range
     const [customMin, setCustomMin] = useState(() => (!presetSalaryMatch && hasValue(filters?.salaryMin)) ? String(filters.salaryMin) : '');
     const [customMax, setCustomMax] = useState(() => (!presetSalaryMatch && hasValue(filters?.salaryMax)) ? String(filters.salaryMax) : '');
     const dispatch = useDispatch();
