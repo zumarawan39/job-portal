@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { RadioGroup, RadioGroupItem } from './ui/radio-group'
 import { Label } from './ui/label'
 import { Button } from './ui/button'
+import { Input } from './ui/input'
 import { Card, CardContent, CardHeader } from './ui/card'
 import { useDispatch, useSelector } from 'react-redux'
 import { setFilters, clearFilters } from '@/redux/jobSlice'
@@ -16,6 +17,8 @@ const locationOptions = PK_CITIES;
 const industryOptions = INDUSTRY_OPTIONS;
 // Salary labels shown to the user, mapped to an explicit numeric min/max range sent to the backend
 const salaryOptions = SALARY_RANGES;
+const CUSTOM_SALARY_LABEL = 'Custom Range';
+const hasValue = (value) => value !== '' && value !== undefined && value !== null;
 
 // Shows radio-button filters (Location, Industry, Salary) to narrow down job search results.
 // Each group keeps its own selection state so picking one group's option doesn't clear another's.
@@ -26,12 +29,18 @@ const FilterCard = () => {
     const { filters } = useSelector(store => store.job);
     const [selectedLocation, setSelectedLocation] = useState(filters?.location || '');
     const [selectedIndustry, setSelectedIndustry] = useState(filters?.industry || '');
+    const presetSalaryMatch = SALARY_RANGES.find(
+        (option) => option.salaryMin === filters?.salaryMin && option.salaryMax === filters?.salaryMax
+    );
     const [selectedSalary, setSelectedSalary] = useState(() => {
-        const match = SALARY_RANGES.find(
-            (option) => option.salaryMin === filters?.salaryMin && option.salaryMax === filters?.salaryMax
-        );
-        return match?.label || '';
+        if (presetSalaryMatch) return presetSalaryMatch.label;
+        if (hasValue(filters?.salaryMin) || hasValue(filters?.salaryMax)) return CUSTOM_SALARY_LABEL;
+        return '';
     });
+    // Pre-fill the custom inputs when the active filter is a custom (non-preset) salary range,
+    // so reloading the page shows the values that are actually being applied.
+    const [customMin, setCustomMin] = useState(() => (!presetSalaryMatch && hasValue(filters?.salaryMin)) ? String(filters.salaryMin) : '');
+    const [customMax, setCustomMax] = useState(() => (!presetSalaryMatch && hasValue(filters?.salaryMax)) ? String(filters.salaryMax) : '');
     const dispatch = useDispatch();
 
     const locationChangeHandler = (value) => {
@@ -46,16 +55,35 @@ const FilterCard = () => {
 
     const salaryChangeHandler = (label) => {
         setSelectedSalary(label);
+        if (label === CUSTOM_SALARY_LABEL) {
+            // Wait for the user to type a range and hit Apply before filtering
+            return;
+        }
         const range = salaryOptions.find((option) => option.label === label);
         if (range) {
+            setCustomMin('');
+            setCustomMax('');
             dispatch(setFilters({ salaryMin: range.salaryMin, salaryMax: range.salaryMax }));
         }
+    }
+
+    const applyCustomSalaryHandler = () => {
+        const min = hasValue(customMin) ? Number(customMin) : '';
+        const max = hasValue(customMax) ? Number(customMax) : '';
+        if (min !== '' && max !== '' && min > max) return;
+        dispatch(setFilters({ salaryMin: min, salaryMax: max }));
+    }
+
+    const customSalaryKeyDownHandler = (e) => {
+        if (e.key === 'Enter') applyCustomSalaryHandler();
     }
 
     const clearFiltersHandler = () => {
         setSelectedLocation('');
         setSelectedIndustry('');
         setSelectedSalary('');
+        setCustomMin('');
+        setCustomMax('');
         dispatch(clearFilters());
     }
 
@@ -121,7 +149,43 @@ const FilterCard = () => {
                                 )
                             })
                         }
+                        <div className='flex items-center space-x-2'>
+                            <RadioGroupItem value={CUSTOM_SALARY_LABEL} id='salary-custom' />
+                            <Label htmlFor='salary-custom' className='cursor-pointer font-normal'>{CUSTOM_SALARY_LABEL}</Label>
+                        </div>
                     </RadioGroup>
+                    {
+                        selectedSalary === CUSTOM_SALARY_LABEL && (
+                            <div className='mt-3 flex flex-col gap-2'>
+                                <div className='flex items-center gap-2'>
+                                    <Input
+                                        type='number'
+                                        min='0'
+                                        inputMode='numeric'
+                                        placeholder='Min'
+                                        value={customMin}
+                                        onChange={(e) => setCustomMin(e.target.value)}
+                                        onKeyDown={customSalaryKeyDownHandler}
+                                        className='h-9 text-sm'
+                                    />
+                                    <span className='text-sm text-muted-foreground'>-</span>
+                                    <Input
+                                        type='number'
+                                        min='0'
+                                        inputMode='numeric'
+                                        placeholder='Max'
+                                        value={customMax}
+                                        onChange={(e) => setCustomMax(e.target.value)}
+                                        onKeyDown={customSalaryKeyDownHandler}
+                                        className='h-9 text-sm'
+                                    />
+                                </div>
+                                <Button onClick={applyCustomSalaryHandler} size='sm' className='h-8 self-end text-xs'>
+                                    Apply
+                                </Button>
+                            </div>
+                        )
+                    }
                 </div>
             </CardContent>
         </Card>
